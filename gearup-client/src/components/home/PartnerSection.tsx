@@ -1,45 +1,104 @@
 'use client';
 
 import Image from 'next/image';
+import { FormEvent, useState } from 'react';
 
 export const PartnerSection = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    contact: '',
+    email: ''
+  });
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    // TODO: Handle form submission
+    console.log(formData);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData(prev => ({
+      ...prev,
+      [e.target.name]: e.target.value
+    }));
+  };
+
   return (
-    <section className="py-16 bg-[#020E07]">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-          <div className="text-white">
-            <h2 className="text-2xl font-bold mb-4">Become A Partner</h2>
-            <h3 className="text-4xl font-bold mb-4">
-              Make your<br />
-              Bookings at<br />
-              <span className="text-[#00FF29]">GEARUP</span>
-            </h3>
-            <form className="space-y-4 max-w-md">
-              <input
-                type="text"
-                placeholder="Your Contact"
-                className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white"
-              />
-              <input
-                type="email"
-                placeholder="Your Email"
-                className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white"
-              />
+    <section 
+      className="py-16 bg-[#020E07] relative min-h-[600px] flex items-center"
+      style={{
+        backgroundImage: `url('/asserts/Bar.png')`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
+        position: 'relative',
+      }}
+    >
+      <div className="absolute inset-0 bg-black/50 z-[1]" />
+      
+      <div className="container mx-auto px-4 relative z-[2] w-full flex items-center justify-center">
+        <div className="flex flex-col md:flex-row gap-8 items-center w-full">
+          {/* Text content - left side on desktop */}
+          <div className="w-full md:w-1/2">
+            <div className='flex flex-col text-center md:text-left justify-center mb-8 md:mb-0'>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Become A Partner</h2>
+              <h3 className="text-5xl md:text-6xl font-bold mb-4 text-white leading-tight">
+                Make your<br />
+                Bookings at<br />
+                <span className="text-[#00FF29]">GEARUP</span>
+              </h3>
+            </div>
+          </div>
+          
+          {/* Form - right side on desktop */}
+          <div className="w-full md:w-1/2">
+            <form onSubmit={handleSubmit} className="space-y-6 w-full md:max-w-md">
+              <div className="space-y-2">
+                <label htmlFor="name" className="block text-sm font-medium text-white">Name</label>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  value={formData.name}
+                  onChange={handleChange}
+                  required
+                  placeholder="Your Name"
+                  className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white focus:border-[#00FF29] focus:outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="contact" className="block text-sm font-medium text-white">Contact</label>
+                <input
+                  id="contact"
+                  name="contact"
+                  type="tel"
+                  value={formData.contact}
+                  onChange={handleChange}
+                  required
+                  placeholder="Your Contact"
+                  className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white focus:border-[#00FF29] focus:outline-none"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="email" className="block text-sm font-medium text-white">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  required
+                  placeholder="Your Email"
+                  className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white focus:border-[#00FF29] focus:outline-none"
+                />
+              </div>
               <button
                 type="submit"
-                className="px-8 py-2 bg-[#00FF29] text-black font-bold rounded hover:bg-[#00CC21]"
+                className="w-full px-8 py-3 bg-[#00FF29] text-black font-bold rounded hover:bg-[#00CC21] transition-colors duration-200"
               >
                 APPLY
               </button>
             </form>
-          </div>
-          <div className="relative h-[400px]">
-            <Image
-              src="/asserts/Players.webp"
-              alt="Football Players"
-              fill
-              className="object-contain"
-            />
           </div>
         </div>
       </div>

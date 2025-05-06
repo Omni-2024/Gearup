@@ -8,7 +8,7 @@ export const HeroSection = () => {
     <section className="relative h-screen">
       <div className="absolute inset-0">
         <Image
-          src="/asserts/Website-BG.png"
+          src="/asserts/GU Web Cover BG.png"
           alt="Hero Background"
           fill
           className="object-cover"
@@ -17,21 +17,14 @@ export const HeroSection = () => {
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#02080D]/90" />
       
-      <div className="relative z-10 h-full flex flex-col items-center justify-center text-center">
-        <h1 className="text-[80px] font-bold text-white tracking-wider" style={{ textShadow: '0 0 10px rgba(0,255,0,0.3)' }}>
-          BOOK NOW
-        </h1>
-        <button className="mt-8">
-          <Link href="/courts">
-            <Image
-              src="/asserts/button-explore.png"
-              alt="Explore Courts"
-              width={200}
-              height={60}
-              className="hover:scale-105 transition-transform"
-            />
-          </Link>
-        </button>
+      <div className="relative z-10 h-full flex flex-col items-center justify-end pb-20">
+        <Link href="/courts">
+          <div className="animate-pulse bg-transparent rounded-full px-8 py-3 border-2 border-[#00ff94] hover:scale-105 transition-all duration-300">
+            <span className="font-bold text-xl bg-gradient-to-r from-[#00ffff] to-[#00ff94] text-transparent bg-clip-text">
+              EXPLORO COURTS
+            </span>
+          </div>
+        </Link>
       </div>
     </section>
   );

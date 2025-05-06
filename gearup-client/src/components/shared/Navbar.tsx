@@ -16,7 +16,7 @@ export const Navbar = () => {
   };
 
   return (
-    <nav className="fixed w-full z-50 bg-[#02080D]/90 backdrop-blur-sm">
+    <nav className="fixed w-full z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link href="/" className="flex items-center">
@@ -30,12 +30,7 @@ export const Navbar = () => {
           </Link>
 
           <div className="flex items-center space-x-6">
-            <Link href="/courts" className="text-white hover:text-green-500 transition-colors">
-              Courts
-            </Link>
-            <Link href="/bookings" className="text-white hover:text-green-500 transition-colors">
-              Bookings
-            </Link>
+
             {snap.user ? (
               <div className="flex items-center space-x-4">
                 <Link href="/profile" className="text-white hover:text-green-500 transition-colors">
@@ -49,12 +44,20 @@ export const Navbar = () => {
                 </button>
               </div>
             ) : (
-              <Link
-                href="/login"
-                className="text-white hover:text-green-500 transition-colors"
-              >
-                Login
-              </Link>
+              <div className="flex items-center space-x-4">
+                <Link
+                  href="/login"
+                  className="px-4 py-1.5 text-sm rounded-full border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white transition-colors"
+                >
+                  LOGIN
+                </Link>
+                <Link
+                  href="/signup"
+                  className="px-4 py-1.5 text-sm rounded-full bg-black text-white hover:bg-green-500 transition-colors"
+                >
+                  SIGN UP
+                </Link>
+              </div>
             )}
           </div>
         </div>
