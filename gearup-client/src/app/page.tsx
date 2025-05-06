@@ -1,25 +1,17 @@
-'use client';
-import { useSnapshot } from 'valtio';
-import { store } from '@/state/store';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+// 'use client';
 
-export default function DashboardPage() {
-  const snap = useSnapshot(store);
-  const router = useRouter();
+import { HeroSection } from '@/components/home/HeroSection';
+import { FeaturedPlaces } from '@/components/home/FeaturedPlaces';
+import { BookingBenefits } from '@/components/home/BookingBenefits';
+import { PartnerSection } from '@/components/home/PartnerSection';
 
-  useEffect(() => {
-    if (!snap.user) {
-      router.push('/login');
-    }
-  }, [snap.user, router]);
-
-  if (!snap.user) return null;
-
+export default function Home() {
   return (
-      <div className="p-4">
-        <h1 className="text-2xl">Welcome, {snap.user.name}</h1>
-        <p>Role: {snap.user.role}</p>
-      </div>
+    <main className="min-h-screen bg-[#02080D]">
+      <HeroSection />
+      <FeaturedPlaces />
+      <BookingBenefits />
+      <PartnerSection />
+    </main>
   );
 }
