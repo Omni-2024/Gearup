@@ -12,6 +12,7 @@ module.exports = {
         secondary: '#1C3F39',
         dark: '#02080D',
         'dark-green': '#020E07',
+        'gearupgreen': '#297216'
       },
       container: {
         center: true,
@@ -19,5 +20,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require('@tailwindcss/forms')],
 }

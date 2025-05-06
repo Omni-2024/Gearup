@@ -27,9 +27,9 @@ export const BookingBenefits = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="text-white">
+              <div className="">
                 <h3 className="text-2xl md:text-3xl font-bold tracking-wide mb-2">{benefit.title}</h3>
-                <p className="text-xl md:text-2xl opacity-90">{benefit.subtitle}</p>
+                <p className="text-xl md:text-2xl font-semibold text-gearupgreen">{benefit.subtitle}</p>
               </div>
             </div>
           ))}
