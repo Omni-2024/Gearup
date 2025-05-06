@@ -10,20 +10,26 @@ const benefits = [
 
 export const BookingBenefits = () => {
   return (
-    <section className="py-16">
+    <section className="py-12 md:py-20">
       <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-16 justify-items-center items-center">
           {benefits.map((benefit, index) => (
-            <div key={index} className="flex items-center gap-4">
-              <Image
-                src={benefit.icon}
-                alt={`${benefit.subtitle}`}
-                width={80}
-                height={80}
-              />
+            <div 
+              key={index} 
+              className="flex flex-col md:flex-row items-center text-center md:text-left gap-6 w-full max-w-xs hover:transform hover:scale-105 transition-transform duration-300"
+            >
+              <div className="w-24 h-24 flex-shrink-0 flex items-center justify-center">
+                <Image
+                  src={benefit.icon}
+                  alt={`${benefit.subtitle}`}
+                  width={96}
+                  height={96}
+                  className="w-full h-full object-contain"
+                />
+              </div>
               <div className="text-white">
-                <h3 className="text-xl font-bold">{benefit.title}</h3>
-                <p>{benefit.subtitle}</p>
+                <h3 className="text-2xl md:text-3xl font-bold tracking-wide mb-2">{benefit.title}</h3>
+                <p className="text-xl md:text-2xl opacity-90">{benefit.subtitle}</p>
               </div>
             </div>
           ))}
