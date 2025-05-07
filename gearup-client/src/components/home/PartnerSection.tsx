@@ -63,7 +63,7 @@ export const PartnerSection = () => {
                   onChange={handleChange}
                   required
                   placeholder="Your Name"
-                  className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white focus:border-[#00FF29] focus:outline-none"
+                  className="w-full px-4 py-2 bg-transparent border border-[#79e840] rounded text-white focus:border-[#79e840] focus:outline-none focus:shadow-[0_0_3px_#79e840]"
                 />
               </div>
               <div className="space-y-2">
@@ -76,7 +76,7 @@ export const PartnerSection = () => {
                   onChange={handleChange}
                   required
                   placeholder="Your Contact"
-                  className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white focus:border-[#00FF29] focus:outline-none"
+                  className="w-full px-4 py-2 bg-transparent border border-[#79e840] rounded text-white focus:border-[#79e840] focus:outline-none focus:shadow-[0_0_3px_#79e840]"
                 />
               </div>
               <div className="space-y-2">
@@ -89,7 +89,7 @@ export const PartnerSection = () => {
                   onChange={handleChange}
                   required
                   placeholder="Your Email"
-                  className="w-full px-4 py-2 bg-transparent border border-gray-600 rounded text-white focus:border-[#00FF29] focus:outline-none"
+                  className="w-full px-4 py-2 bg-transparent border border-[#79e840] rounded text-white focus:border-[#79e840] focus:outline-none focus:shadow-[0_0_3px_#79e840]"
                 />
               </div>
               <button
