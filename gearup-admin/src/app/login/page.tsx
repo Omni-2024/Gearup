@@ -365,8 +365,10 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 py-12">
-            <Card className="w-full max-w-md shadow-lg border-gray-200">
+        <div
+            className="min-h-screen flex items-center justify-center bg-no-repeat bg-cover bg-center bg-fixed"
+            style={{ backgroundImage: "url('/assets/Website-BG.png')" }}
+        >            <Card className="w-full max-w-md shadow-lg border-gray-200">
                 <CardHeader className="space-y-1">
                     <CardTitle className="text-2xl font-bold text-center">{getCardTitle()}</CardTitle>
                     <CardDescription className="text-center">{getCardDescription()}</CardDescription>
@@ -383,7 +385,7 @@ export default function LoginPage() {
                 </CardContent>
 
                 {activeView === "login" && (
-                    <CardFooter className="flex flex-col space-y-4">
+                    <CardFooter className="flex flex-col space-y-4 ">
                         <div className="relative w-full">
                             <div className="absolute inset-0 flex items-center">
                                 <span className="w-full border-t" />
@@ -393,19 +395,19 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <Button variant="outline" className="w-full">
+                        <div className=" grid grid-cols-1 gap-4">
+                            <Button variant="outline" className="w-96">
                                 Google
                             </Button>
-                            <Button variant="outline" className="w-full">
-                                GitHub
-                            </Button>
+                            {/*<Button variant="outline" className="w-full">*/}
+                            {/*    GitHub*/}
+                            {/*</Button>*/}
                         </div>
 
                         <p className="text-center text-sm text-gray-500">
-                            Don't have an account?{" "}
+                            Facing any issues?{" "}
                             <Button variant="link" className="p-0 h-auto" onClick={() => router.push("/auth/register")}>
-                                Sign up
+                                Contact us
                             </Button>
                         </p>
                     </CardFooter>
