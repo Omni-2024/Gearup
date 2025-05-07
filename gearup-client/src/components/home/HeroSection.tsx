@@ -21,7 +21,7 @@ export const HeroSection = () => {
         <Link href="/courts">
           <div className="animate-pulse bg-transparent rounded-full px-8 py-3 border-2 border-[#00ff94] hover:scale-105 transition-all duration-300">
             <span className="font-bold text-xl bg-gradient-to-r from-[#00ffff] to-[#00ff94] text-transparent bg-clip-text">
-              EXPLORO COURTS
+              EXPLORE COURTS
             </span>
           </div>
         </Link>

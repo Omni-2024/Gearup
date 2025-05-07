@@ -45,9 +45,9 @@ export const BookingBenefits = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="">
+              <div className="space-x-2">
                 <h3 className="text-2xl md:text-3xl font-bold tracking-wide mb-2">{benefit.title}</h3>
-                <p className="text-xl md:text-2xl font-semibold text-gearupgreen">{benefit.subtitle}</p>
+                <p className="text-xl md:text-2xl font-semibold text-[#297216]">{benefit.subtitle}</p>
               </div>
             </div>
           ))}
