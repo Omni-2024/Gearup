@@ -93,8 +93,7 @@ export function CreateBookingDialog({ open, onOpenChange }: CreateBookingDialogP
                 toast({
                     title: "Missing information",
                     description: "Please select both a date and court",
-                    type: "error",
-                })
+                    variant: "destructive",                })
                 return
             }
             setStep(2)
@@ -103,8 +102,7 @@ export function CreateBookingDialog({ open, onOpenChange }: CreateBookingDialogP
                 toast({
                     title: "No time slots selected",
                     description: "Please select at least one time slot",
-                    type: "error",
-                })
+                    variant: "destructive",                })
                 return
             }
             setStep(3)
@@ -113,8 +111,7 @@ export function CreateBookingDialog({ open, onOpenChange }: CreateBookingDialogP
                 toast({
                     title: "Missing information",
                     description: "Please fill in all customer details",
-                    type: "error",
-                })
+                    variant: "destructive",                })
                 return
             }
             handleCreateBooking()
@@ -143,8 +140,7 @@ export function CreateBookingDialog({ open, onOpenChange }: CreateBookingDialogP
         toast({
             title: "Booking created",
             description: `Booking for ${customerName} on ${date?.toLocaleDateString()} has been created`,
-            type: "success",
-        })
+            variant: "default",        })
 
         onOpenChange(false)
     }

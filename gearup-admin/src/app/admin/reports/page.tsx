@@ -223,15 +223,13 @@ export default function ReportsPage() {
             toast({
                 title: "Report Downloaded",
                 description: `Your ${format.toUpperCase()} report has been downloaded successfully.`,
-                type: "success",
-            })
+                variant: "default",            })
         } catch (error) {
             console.error("Error generating report:", error)
             toast({
                 title: "Download Failed",
                 description: "There was an error generating your report. Please try again.",
-                type: "error",
-            })
+                variant: "destructive",            })
         } finally {
             setIsGeneratingFile(false)
         }
@@ -335,8 +333,7 @@ export default function ReportsPage() {
         toast({
             title: "Report Shared",
             description: `Your report would be shared via ${method} in a real application.`,
-            type: "success",
-        })
+            variant: "default",        })
     }
 
     // Get date range label

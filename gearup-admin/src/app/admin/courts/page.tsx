@@ -16,9 +16,11 @@ import {
 import { MoreHorizontal, Plus, Search, Edit, Trash, Calendar } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { AddCourtDialog } from "@/components/add-court-dialog"
+import { toast } from "@/components/ui/use-toast"
 
 // Mock data for courts
-const courts = [
+const initialCourts = [
     {
         id: 1,
         name: "Court 1",
@@ -28,6 +30,7 @@ const courts = [
         status: "Available",
         bookingsToday: 5,
         image: "/placeholder.svg?height=40&width=40",
+        logo: null,
     },
     {
         id: 2,
@@ -38,6 +41,7 @@ const courts = [
         status: "Available",
         bookingsToday: 3,
         image: "/placeholder.svg?height=40&width=40",
+        logo: null,
     },
     {
         id: 3,
@@ -48,6 +52,7 @@ const courts = [
         status: "Maintenance",
         bookingsToday: 0,
         image: "/placeholder.svg?height=40&width=40",
+        logo: null,
     },
     {
         id: 4,
@@ -58,6 +63,7 @@ const courts = [
         status: "Available",
         bookingsToday: 4,
         image: "/placeholder.svg?height=40&width=40",
+        logo: null,
     },
     {
         id: 5,
@@ -68,6 +74,7 @@ const courts = [
         status: "Available",
         bookingsToday: 2,
         image: "/placeholder.svg?height=40&width=40",
+        logo: null,
     },
 ]
 
@@ -123,6 +130,8 @@ const courtStats = [
 export default function CourtsPage() {
     const [searchTerm, setSearchTerm] = useState("")
     const [activeTab, setActiveTab] = useState("courts")
+    const [courts, setCourts] = useState(initialCourts)
+    const [isAddCourtOpen, setIsAddCourtOpen] = useState(false)
 
     const filteredCourts = courts.filter(
         (court) =>
@@ -144,6 +153,33 @@ export default function CourtsPage() {
         }
     }
 
+    const handleAddCourt = (newCourt: any) => {
+        setCourts([...courts, newCourt])
+    }
+
+    const handleDeleteCourt = (id: number) => {
+        // Check if court has bookings today
+        const court = courts.find((c) => c.id === id)
+        if (court && court.bookingsToday > 0) {
+            toast({
+                title: "Cannot delete court",
+                description: `${court.name} has ${court.bookingsToday} bookings today and cannot be deleted.`,
+                variant: "destructive",
+            })
+            return
+        }
+
+        // Confirm deletion
+        if (confirm(`Are you sure you want to delete this court?`)) {
+            setCourts(courts.filter((court) => court.id !== id))
+            toast({
+                title: "Court deleted",
+                description: "The court has been deleted successfully.",
+                variant: "default",
+            })
+        }
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -151,7 +187,7 @@ export default function CourtsPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Courts</h1>
                     <p className="text-muted-foreground">Manage your futsal courts and view statistics</p>
                 </div>
-                <Button className="w-full md:w-auto">
+                <Button className="w-full md:w-auto" onClick={() => setIsAddCourtOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Add New Court
                 </Button>
@@ -208,7 +244,10 @@ export default function CourtsPage() {
                                                                 alt={court.name}
                                                                 className="rounded w-8 h-8 object-cover"
                                                             />
-                                                            {court.name}
+                                                            <div className="flex flex-col">
+                                                                {court.name}
+                                                                {court.logo && <span className="text-xs text-muted-foreground">Has custom logo</span>}
+                                                            </div>
                                                         </div>
                                                     </TableCell>
                                                     <TableCell>{court.type}</TableCell>
@@ -244,7 +283,10 @@ export default function CourtsPage() {
                                                                     <Calendar className="mr-2 h-4 w-4" />
                                                                     View Schedule
                                                                 </DropdownMenuItem>
-                                                                <DropdownMenuItem>
+                                                                <DropdownMenuItem
+                                                                    onClick={() => handleDeleteCourt(court.id)}
+                                                                    className="text-red-600 focus:text-red-600"
+                                                                >
                                                                     <Trash className="mr-2 h-4 w-4" />
                                                                     Delete
                                                                 </DropdownMenuItem>
@@ -318,6 +360,8 @@ export default function CourtsPage() {
                     </Card>
                 </TabsContent>
             </Tabs>
+
+            <AddCourtDialog open={isAddCourtOpen} onOpenChange={setIsAddCourtOpen} onCourtAdded={handleAddCourt} />
         </div>
     )
 }

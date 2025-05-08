@@ -77,7 +77,7 @@ export function RescheduleBookingDialog({ booking, open, onOpenChange }: Resched
             toast({
                 title: "Missing information",
                 description: "Please select both a date and time slot",
-                type: "error",
+                variant: "destructive",
             })
             return
         }
@@ -92,7 +92,7 @@ export function RescheduleBookingDialog({ booking, open, onOpenChange }: Resched
         toast({
             title: "Booking rescheduled",
             description: `Booking ${booking.id} has been rescheduled to ${format(date, "PPP")} at ${timeSlots.find((slot) => slot.id === selectedTimeSlot)?.time}`,
-            type: "success",
+            variant: "default",
         })
 
         onOpenChange(false)
