@@ -1,4 +1,5 @@
-'use client'
+"use client"
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import {
     BarChart,
@@ -12,12 +13,23 @@ import {
     Line,
     PieChart,
     Pie,
-    Cell
+    Cell,
+    Legend,
 } from "recharts"
-import { ArrowUpRight, Users, ShoppingCart, DollarSign, TrendingUp } from 'lucide-react'
+import { ArrowUpRight, Users, Calendar, DollarSign, Clock, Layers } from "lucide-react"
 
 export default function DashboardPage() {
     // Sample data for charts
+    const bookingsData = [
+        { name: "Mon", bookings: 24 },
+        { name: "Tue", bookings: 18 },
+        { name: "Wed", bookings: 22 },
+        { name: "Thu", bookings: 26 },
+        { name: "Fri", bookings: 32 },
+        { name: "Sat", bookings: 38 },
+        { name: "Sun", bookings: 30 },
+    ]
+
     const revenueData = [
         { name: "Jan", revenue: 4000 },
         { name: "Feb", revenue: 3000 },
@@ -27,49 +39,47 @@ export default function DashboardPage() {
         { name: "Jun", revenue: 5500 },
     ]
 
-    const visitorsData = [
-        { name: "Mon", visitors: 1200 },
-        { name: "Tue", visitors: 1400 },
-        { name: "Wed", visitors: 1300 },
-        { name: "Thu", visitors: 1500 },
-        { name: "Fri", visitors: 1800 },
-        { name: "Sat", visitors: 1200 },
-        { name: "Sun", visitors: 800 },
+    const timeSlotData = [
+        { name: "Morning (6-12)", value: 30 },
+        { name: "Afternoon (12-5)", value: 25 },
+        { name: "Evening (5-9)", value: 35 },
+        { name: "Night (9-12)", value: 10 },
     ]
 
-    const productData = [
-        { name: "Electronics", value: 35 },
-        { name: "Clothing", value: 25 },
-        { name: "Books", value: 15 },
-        { name: "Home", value: 25 },
+    const courtUsageData = [
+        { name: "Court 1", bookings: 45 },
+        { name: "Court 2", bookings: 38 },
+        { name: "Court 3", bookings: 42 },
+        { name: "Court 4", bookings: 30 },
+        { name: "Court 5", bookings: 25 },
     ]
 
     const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
 
     const stats = [
         {
-            title: "Total Users",
-            value: "12,345",
+            title: "Total Bookings",
+            value: "1,234",
             change: "+12%",
-            icon: Users,
+            icon: Calendar,
         },
         {
-            title: "Total Revenue",
-            value: "$34,567",
+            title: "Revenue",
+            value: "$8,567",
             change: "+8%",
             icon: DollarSign,
         },
         {
-            title: "Bookings",
-            value: "1,234",
+            title: "Active Users",
+            value: "345",
             change: "+23%",
-            icon: ShoppingCart,
+            icon: Users,
         },
         {
-            title: "Conversion",
-            value: "3.2%",
+            title: "Court Utilization",
+            value: "78%",
             change: "+5%",
-            icon: TrendingUp,
+            icon: Layers,
         },
     ]
 
@@ -77,9 +87,7 @@ export default function DashboardPage() {
         <div className="space-y-6">
             <div>
                 <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                <p className="text-muted-foreground">
-                    Overview of your business performance and analytics
-                </p>
+                <p className="text-muted-foreground">Overview of your futsal court bookings and performance</p>
             </div>
 
             {/* Stats cards */}
@@ -89,9 +97,7 @@ export default function DashboardPage() {
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-muted-foreground">
-                                        {stat.title}
-                                    </p>
+                                    <p className="text-sm font-medium text-muted-foreground">{stat.title}</p>
                                     <p className="text-2xl font-bold">{stat.value}</p>
                                 </div>
                                 <div className="rounded-full bg-primary/10 p-2">
@@ -111,18 +117,18 @@ export default function DashboardPage() {
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Revenue Overview</CardTitle>
-                        <CardDescription>Monthly revenue performance</CardDescription>
+                        <CardTitle>Weekly Bookings</CardTitle>
+                        <CardDescription>Number of court bookings per day</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={revenueData}>
+                                <BarChart data={bookingsData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" />
                                     <YAxis />
                                     <Tooltip />
-                                    <Bar dataKey="revenue" fill="#3b82f6" />
+                                    <Bar dataKey="bookings" fill="#3b82f6" />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
@@ -131,23 +137,18 @@ export default function DashboardPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Visitor Traffic</CardTitle>
-                        <CardDescription>Daily visitor count</CardDescription>
+                        <CardTitle>Monthly Revenue</CardTitle>
+                        <CardDescription>Revenue from court bookings</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={visitorsData}>
+                                <LineChart data={revenueData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" />
                                     <YAxis />
-                                    <Tooltip />
-                                    <Line
-                                        type="monotone"
-                                        dataKey="visitors"
-                                        stroke="#8884d8"
-                                        strokeWidth={2}
-                                    />
+                                    <Tooltip formatter={(value) => [`$${value}`, "Revenue"]} />
+                                    <Line type="monotone" dataKey="revenue" stroke="#8884d8" strokeWidth={2} />
                                 </LineChart>
                             </ResponsiveContainer>
                         </div>
@@ -158,15 +159,15 @@ export default function DashboardPage() {
             <div className="grid gap-6 md:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Product Categories</CardTitle>
-                        <CardDescription>Revenue distribution by category</CardDescription>
+                        <CardTitle>Popular Time Slots</CardTitle>
+                        <CardDescription>Distribution of bookings by time of day</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <div className="h-[300px]">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
                                     <Pie
-                                        data={productData}
+                                        data={timeSlotData}
                                         cx="50%"
                                         cy="50%"
                                         labelLine={false}
@@ -175,11 +176,12 @@ export default function DashboardPage() {
                                         dataKey="value"
                                         label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
                                     >
-                                        {productData.map((entry, index) => (
+                                        {timeSlotData.map((entry, index) => (
                                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                         ))}
                                     </Pie>
                                     <Tooltip />
+                                    <Legend />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
@@ -188,28 +190,97 @@ export default function DashboardPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Recent Activity</CardTitle>
-                        <CardDescription>Latest system events</CardDescription>
+                        <CardTitle>Court Usage</CardTitle>
+                        <CardDescription>Number of bookings per court</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-4">
-                            {[1, 2, 3, 4, 5].map((item) => (
-                                <div key={item} className="flex items-center gap-4 border-b pb-4 last:border-0">
-                                    <div className="rounded-full bg-primary/10 p-2">
-                                        <Users className="h-4 w-4 text-primary" />
-                                    </div>
-                                    <div>
-                                        <p className="text-sm font-medium">New user registered</p>
-                                        <p className="text-xs text-muted-foreground">
-                                            {item} hour{item !== 1 ? "s" : ""} ago
-                                        </p>
-                                    </div>
-                                </div>
-                            ))}
+                        <div className="h-[300px]">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={courtUsageData} layout="vertical">
+                                    <CartesianGrid strokeDasharray="3 3" />
+                                    <XAxis type="number" />
+                                    <YAxis dataKey="name" type="category" width={80} />
+                                    <Tooltip />
+                                    <Bar dataKey="bookings" fill="#82ca9d" />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </div>
                     </CardContent>
                 </Card>
             </div>
+
+            <Card>
+                <CardHeader>
+                    <CardTitle>Recent Bookings</CardTitle>
+                    <CardDescription>Latest court reservations</CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="space-y-4">
+                        {[
+                            {
+                                court: "Court 1",
+                                user: "John Doe",
+                                time: "Today, 6:00 PM - 7:00 PM",
+                                status: "Confirmed",
+                                icon: Calendar,
+                            },
+                            {
+                                court: "Court 3",
+                                user: "Jane Smith",
+                                time: "Today, 7:00 PM - 8:00 PM",
+                                status: "Confirmed",
+                                icon: Calendar,
+                            },
+                            {
+                                court: "Court 2",
+                                user: "Robert Johnson",
+                                time: "Today, 8:00 PM - 9:00 PM",
+                                status: "Pending",
+                                icon: Clock,
+                            },
+                            {
+                                court: "Court 4",
+                                user: "Emily Davis",
+                                time: "Tomorrow, 5:00 PM - 6:00 PM",
+                                status: "Confirmed",
+                                icon: Calendar,
+                            },
+                            {
+                                court: "Court 1",
+                                user: "Michael Wilson",
+                                time: "Tomorrow, 7:00 PM - 8:00 PM",
+                                status: "Confirmed",
+                                icon: Calendar,
+                            },
+                        ].map((booking, index) => (
+                            <div key={index} className="flex items-center gap-4 border-b pb-4 last:border-0">
+                                <div
+                                    className={`rounded-full p-2 ${
+                                        booking.status === "Confirmed" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600"
+                                    }`}
+                                >
+                                    <booking.icon className="h-4 w-4" />
+                                </div>
+                                <div className="flex-1">
+                                    <div className="flex justify-between">
+                                        <p className="text-sm font-medium">
+                                            {booking.court} • {booking.user}
+                                        </p>
+                                        <span
+                                            className={`text-xs px-2 py-1 rounded-full ${
+                                                booking.status === "Confirmed" ? "bg-green-100 text-green-600" : "bg-yellow-100 text-yellow-600"
+                                            }`}
+                                        >
+                      {booking.status}
+                    </span>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground">{booking.time}</p>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
         </div>
     )
 }

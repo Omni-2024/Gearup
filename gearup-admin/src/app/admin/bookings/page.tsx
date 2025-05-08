@@ -1,20 +1,8 @@
-'use client'
+"use client"
+
 import { useState } from "react"
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow
-} from "@/components/ui/table"
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle
-} from "@/components/ui/card"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -23,96 +11,116 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { MoreHorizontal, Search, Eye, Download, ShoppingCart } from 'lucide-react'
+import { MoreHorizontal, Search, Eye, Calendar, Plus, Download } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
-// Mock data for orders
-const orders = [
+// Mock data for bookings
+const bookings = [
     {
-        id: "#ORD-001",
+        id: "#BK-001",
         customer: "John Doe",
+        court: "Court 1",
         date: "2023-05-15",
-        total: 299.99,
-        status: "Completed",
-        items: 3,
+        time: "6:00 PM - 7:00 PM",
+        amount: 50,
+        status: "Confirmed",
+        paymentStatus: "Paid",
     },
     {
-        id: "#ORD-002",
+        id: "#BK-002",
         customer: "Jane Smith",
+        court: "Court 2",
         date: "2023-05-14",
-        total: 159.95,
-        status: "Processing",
-        items: 2,
+        time: "7:00 PM - 8:00 PM",
+        amount: 50,
+        status: "Confirmed",
+        paymentStatus: "Paid",
     },
     {
-        id: "#ORD-003",
+        id: "#BK-003",
         customer: "Robert Johnson",
+        court: "Court 3",
         date: "2023-05-13",
-        total: 499.99,
-        status: "Shipped",
-        items: 1,
-    },
-    {
-        id: "#ORD-004",
-        customer: "Emily Davis",
-        date: "2023-05-12",
-        total: 89.99,
-        status: "Completed",
-        items: 1,
-    },
-    {
-        id: "#ORD-005",
-        customer: "Michael Wilson",
-        date: "2023-05-11",
-        total: 249.95,
+        time: "8:00 PM - 9:00 PM",
+        amount: 70,
         status: "Cancelled",
-        items: 2,
+        paymentStatus: "Refunded",
     },
     {
-        id: "#ORD-006",
+        id: "#BK-004",
+        customer: "Emily Davis",
+        court: "Court 4",
+        date: "2023-05-16",
+        time: "5:00 PM - 6:00 PM",
+        amount: 40,
+        status: "Pending",
+        paymentStatus: "Unpaid",
+    },
+    {
+        id: "#BK-005",
+        customer: "Michael Wilson",
+        court: "Court 1",
+        date: "2023-05-16",
+        time: "7:00 PM - 8:00 PM",
+        amount: 50,
+        status: "Confirmed",
+        paymentStatus: "Paid",
+    },
+    {
+        id: "#BK-006",
         customer: "Sarah Brown",
-        date: "2023-05-10",
-        total: 349.99,
-        status: "Processing",
-        items: 4,
+        court: "Court 5",
+        date: "2023-05-17",
+        time: "6:00 PM - 7:00 PM",
+        amount: 60,
+        status: "Confirmed",
+        paymentStatus: "Paid",
     },
     {
-        id: "#ORD-007",
+        id: "#BK-007",
         customer: "David Miller",
-        date: "2023-05-09",
-        total: 129.99,
-        status: "Shipped",
-        items: 1,
+        court: "Court 2",
+        date: "2023-05-17",
+        time: "8:00 PM - 9:00 PM",
+        amount: 50,
+        status: "Pending",
+        paymentStatus: "Unpaid",
     },
     {
-        id: "#ORD-008",
+        id: "#BK-008",
         customer: "Lisa Anderson",
-        date: "2023-05-08",
-        total: 199.95,
-        status: "Completed",
-        items: 2,
+        court: "Court 3",
+        date: "2023-05-18",
+        time: "7:00 PM - 9:00 PM",
+        amount: 140,
+        status: "Confirmed",
+        paymentStatus: "Paid",
     },
 ]
 
-export default function OrdersPage() {
+export default function BookingsPage() {
     const [searchTerm, setSearchTerm] = useState("")
+    const [statusFilter, setStatusFilter] = useState("all")
+    const [courtFilter, setCourtFilter] = useState("all")
 
-    const filteredOrders = orders.filter(order =>
-        order.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        order.status.toLowerCase().includes(searchTerm.toLowerCase())
+    const filteredBookings = bookings.filter(
+        (booking) =>
+            (booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                booking.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                booking.court.toLowerCase().includes(searchTerm.toLowerCase())) &&
+            (statusFilter === "all" || booking.status.toLowerCase() === statusFilter.toLowerCase()) &&
+            (courtFilter === "all" || booking.court === courtFilter),
     )
 
     const getStatusColor = (status: string) => {
         switch (status.toLowerCase()) {
-            case "completed":
+            case "confirmed":
                 return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
-            case "processing":
-                return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
-            case "shipped":
-                return "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400"
+            case "pending":
+                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
             case "cancelled":
                 return "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400"
             default:
@@ -120,33 +128,74 @@ export default function OrdersPage() {
         }
     }
 
+    const getPaymentStatusColor = (status: string) => {
+        switch (status.toLowerCase()) {
+            case "paid":
+                return "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400"
+            case "unpaid":
+                return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400"
+            case "refunded":
+                return "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400"
+            default:
+                return "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400"
+        }
+    }
+
     return (
         <div className="space-y-6">
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight">Orders</h1>
-                <p className="text-muted-foreground">
-                    View and manage customer orders
-                </p>
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
+                    <p className="text-muted-foreground">Manage court reservations and bookings</p>
+                </div>
+                <Button className="w-full md:w-auto">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create New Booking
+                </Button>
             </div>
 
             <Card>
                 <CardHeader className="pb-3">
                     <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                         <div>
-                            <CardTitle>All Orders</CardTitle>
-                            <CardDescription>
-                                A list of all orders including their status and total amount
-                            </CardDescription>
+                            <CardTitle>All Bookings</CardTitle>
+                            <CardDescription>A list of all court bookings including their status and details</CardDescription>
                         </div>
-                        <div className="relative w-full md:w-64">
-                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                            <Input
-                                type="search"
-                                placeholder="Search orders..."
-                                className="pl-8 w-full"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                            />
+                        <div className="flex flex-col md:flex-row gap-4">
+                            <div className="relative w-full md:w-64">
+                                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    type="search"
+                                    placeholder="Search bookings..."
+                                    className="pl-8 w-full"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                />
+                            </div>
+                            <Select value={statusFilter} onValueChange={setStatusFilter}>
+                                <SelectTrigger className="w-full md:w-[180px]">
+                                    <SelectValue placeholder="Filter by status" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Statuses</SelectItem>
+                                    <SelectItem value="confirmed">Confirmed</SelectItem>
+                                    <SelectItem value="pending">Pending</SelectItem>
+                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                </SelectContent>
+                            </Select>
+                            <Select value={courtFilter} onValueChange={setCourtFilter}>
+                                <SelectTrigger className="w-full md:w-[180px]">
+                                    <SelectValue placeholder="Filter by court" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="all">All Courts</SelectItem>
+                                    <SelectItem value="Court 1">Court 1</SelectItem>
+                                    <SelectItem value="Court 2">Court 2</SelectItem>
+                                    <SelectItem value="Court 3">Court 3</SelectItem>
+                                    <SelectItem value="Court 4">Court 4</SelectItem>
+                                    <SelectItem value="Court 5">Court 5</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
                 </CardHeader>
@@ -155,27 +204,35 @@ export default function OrdersPage() {
                         <Table>
                             <TableHeader>
                                 <TableRow>
-                                    <TableHead>Order ID</TableHead>
+                                    <TableHead>Booking ID</TableHead>
                                     <TableHead>Customer</TableHead>
+                                    <TableHead>Court</TableHead>
                                     <TableHead>Date</TableHead>
-                                    <TableHead>Items</TableHead>
-                                    <TableHead>Total</TableHead>
+                                    <TableHead>Time</TableHead>
+                                    <TableHead>Amount</TableHead>
                                     <TableHead>Status</TableHead>
+                                    <TableHead>Payment</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody>
-                                {filteredOrders.length > 0 ? (
-                                    filteredOrders.map((order) => (
-                                        <TableRow key={order.id}>
-                                            <TableCell className="font-medium">{order.id}</TableCell>
-                                            <TableCell>{order.customer}</TableCell>
-                                            <TableCell>{order.date}</TableCell>
-                                            <TableCell>{order.items}</TableCell>
-                                            <TableCell>${order.total.toFixed(2)}</TableCell>
+                                {filteredBookings.length > 0 ? (
+                                    filteredBookings.map((booking) => (
+                                        <TableRow key={booking.id}>
+                                            <TableCell className="font-medium">{booking.id}</TableCell>
+                                            <TableCell>{booking.customer}</TableCell>
+                                            <TableCell>{booking.court}</TableCell>
+                                            <TableCell>{booking.date}</TableCell>
+                                            <TableCell>{booking.time}</TableCell>
+                                            <TableCell>${booking.amount}</TableCell>
                                             <TableCell>
-                                                <Badge className={getStatusColor(order.status)} variant="outline">
-                                                    {order.status}
+                                                <Badge className={getStatusColor(booking.status)} variant="outline">
+                                                    {booking.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge className={getPaymentStatusColor(booking.paymentStatus)} variant="outline">
+                                                    {booking.paymentStatus}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right">
@@ -194,8 +251,12 @@ export default function OrdersPage() {
                                                             View Details
                                                         </DropdownMenuItem>
                                                         <DropdownMenuItem>
+                                                            <Calendar className="mr-2 h-4 w-4" />
+                                                            Reschedule
+                                                        </DropdownMenuItem>
+                                                        <DropdownMenuItem>
                                                             <Download className="mr-2 h-4 w-4" />
-                                                            Download Invoice
+                                                            Download Receipt
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
                                                 </DropdownMenu>
@@ -204,8 +265,8 @@ export default function OrdersPage() {
                                     ))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={7} className="text-center py-6 text-muted-foreground">
-                                            No orders found matching your search criteria.
+                                        <TableCell colSpan={9} className="text-center py-6 text-muted-foreground">
+                                            No bookings found matching your search criteria.
                                         </TableCell>
                                     </TableRow>
                                 )}

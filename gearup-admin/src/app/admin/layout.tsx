@@ -1,9 +1,23 @@
 "use client"
 
+import type React from "react"
+
 import { useState } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { BarChart3, Users, ShoppingCart, Settings, Package, FileText, MessageSquare, Bell, LogOut, MenuIcon, X } from 'lucide-react'
+import {
+    BarChart3,
+    Users,
+    Calendar,
+    Settings,
+    Layers,
+    FileText,
+    MessageSquare,
+    Bell,
+    LogOut,
+    MenuIcon,
+    X,
+} from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -22,19 +36,19 @@ export default function AdminLayout({
             icon: BarChart3,
         },
         {
-            name: "Users",
-            path: "/admin/users",
-            icon: Users,
-        },
-        {
-            name: "Products",
-            path: "/admin/products",
-            icon: Package,
+            name: "Courts",
+            path: "/admin/courts",
+            icon: Layers,
         },
         {
             name: "Bookings",
             path: "/admin/bookings",
-            icon: ShoppingCart,
+            icon: Calendar,
+        },
+        {
+            name: "Users",
+            path: "/admin/users",
+            icon: Users,
         },
         {
             name: "Reports",
@@ -65,12 +79,7 @@ export default function AdminLayout({
     return (
         <div className="flex h-screen bg-gray-100 dark:bg-gray-900">
             {/* Mobile sidebar toggle */}
-            <Button
-                variant="ghost"
-                size="icon"
-                className="fixed top-4 left-4 z-50 lg:hidden"
-                onClick={toggleSidebar}
-            >
+            <Button variant="ghost" size="icon" className="fixed top-4 left-4 z-50 lg:hidden" onClick={toggleSidebar}>
                 {isSidebarOpen ? <X /> : <MenuIcon />}
             </Button>
 
@@ -78,7 +87,7 @@ export default function AdminLayout({
             <div
                 className={cn(
                     "fixed inset-y-0 left-0 z-40 w-64 transform bg-white dark:bg-gray-800 shadow-lg transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-auto lg:w-64",
-                    isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+                    isSidebarOpen ? "translate-x-0" : "-translate-x-full",
                 )}
             >
                 <div className="flex flex-col h-full">
@@ -86,9 +95,9 @@ export default function AdminLayout({
                     <div className="flex items-center justify-center h-16 border-b dark:border-gray-700">
                         <Link href="/admin/dashboard" className="flex items-center">
                             <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
-                                <span className="text-white font-bold">A</span>
+                                <span className="text-white font-bold">F</span>
                             </div>
-                            <span className="ml-2 text-xl font-semibold dark:text-white">Admin Panel</span>
+                            <span className="ml-2 text-xl font-semibold dark:text-white">Futsal Admin</span>
                         </Link>
                     </div>
 
@@ -105,7 +114,7 @@ export default function AdminLayout({
                                                 "flex items-center px-4 py-3 text-sm rounded-md transition-colors",
                                                 isActive
                                                     ? "bg-primary text-primary-foreground"
-                                                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                                    : "text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700",
                                             )}
                                             onClick={() => {
                                                 if (window.innerWidth < 1024) {
@@ -113,7 +122,12 @@ export default function AdminLayout({
                                                 }
                                             }}
                                         >
-                                            <route.icon className={cn("h-5 w-5 mr-3", isActive ? "text-primary-foreground" : "text-gray-500 dark:text-gray-400")} />
+                                            <route.icon
+                                                className={cn(
+                                                    "h-5 w-5 mr-3",
+                                                    isActive ? "text-primary-foreground" : "text-gray-500 dark:text-gray-400",
+                                                )}
+                                            />
                                             {route.name}
                                         </Link>
                                     </li>
@@ -142,9 +156,7 @@ export default function AdminLayout({
             {/* Main content */}
             <div className="flex-1 flex flex-col overflow-hidden">
                 {/* Content area */}
-                <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900">
-                    {children}
-                </main>
+                <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-gray-900">{children}</main>
             </div>
         </div>
     )
