@@ -18,21 +18,48 @@ import {
     LineChart,
     Line,
 } from "recharts"
-import { Download, FileText, FileSpreadsheet, FileIcon as FilePdf, Filter, CheckSquare } from "lucide-react"
+import {
+    Filter,
+    CheckSquare,
+    Eye,
+    TableIcon,
+    BarChartIcon as ChartIcon,
+    Printer,
+    Copy,
+    Mail,
+    FileText,
+    FileSpreadsheet,
+    FileIcon as FilePdf,
+    Download,
+} from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog"
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { Separator } from "@/components/ui/separator"
+import { useToast } from "@/hooks/use-toast"
 
 export default function ReportsPage() {
     // State for export options
     const [dateRange, setDateRange] = useState<"last7days" | "last30days" | "last90days" | "custom">("last30days")
     const [startDate, setStartDate] = useState("")
     const [endDate, setEndDate] = useState("")
-    const [exportFormat, setExportFormat] = useState<"csv" | "excel" | "pdf">("excel")
+    const [exportFormat, setExportFormat] = useState<"table" | "summary" | "print" | "csv" | "excel" | "pdf">("summary")
     const [showExportOptions, setShowExportOptions] = useState(false)
+    const [showExportPreview, setShowExportPreview] = useState(false)
+    const [isGeneratingFile, setIsGeneratingFile] = useState(false)
+    const { toast } = useToast()
     const [selectedMetrics, setSelectedMetrics] = useState({
         revenue: true,
         bookings: true,
@@ -92,22 +119,224 @@ export default function ReportsPage() {
 
     const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"]
 
+    // Get format icon
+    const getFormatIcon = () => {
+        switch (exportFormat) {
+            case "table":
+                return <TableIcon className="h-4 w-4 mr-2" />
+            case "summary":
+                return <ChartIcon className="h-4 w-4 mr-2" />
+            case "print":
+                return <Printer className="h-4 w-4 mr-2" />
+            case "csv":
+                return <FileText className="h-4 w-4 mr-2" />
+            case "excel":
+                return <FileSpreadsheet className="h-4 w-4 mr-2" />
+            case "pdf":
+                return <FilePdf className="h-4 w-4 mr-2" />
+            default:
+                return <Eye className="h-4 w-4 mr-2" />
+        }
+    }
+
     // Handle export action
     const handleExport = () => {
-        // In a real application, this would trigger the export process
-        // based on the selected format, date range, and metrics
-
-        const exportData = {
-            format: exportFormat,
-            dateRange,
-            customRange: dateRange === "custom" ? { startDate, endDate } : null,
-            metrics: selectedMetrics,
+        // For on-screen preview formats, show the dialog
+        if (exportFormat === "table" || exportFormat === "summary" || exportFormat === "print") {
+            setShowExportPreview(true)
+            return
         }
 
-        console.log("Exporting report with options:", exportData)
+        // For file downloads, prepare and trigger the download
+        downloadReport(exportFormat)
+    }
 
-        // Show success message or trigger download
-        alert(`Report exported as ${exportFormat.toUpperCase()}. In a real application, this would download the file.`)
+    // Function to generate and download reports
+    const downloadReport = async (format: string) => {
+        setIsGeneratingFile(true)
+
+        try {
+            // In a real application, this would be an API call to generate the report
+            // For this demo, we'll create a simple CSV/Excel/PDF file with some data
+
+            // Prepare the data based on selected metrics
+            const reportData: any = {}
+
+            if (selectedMetrics.revenue) {
+                reportData.revenue = monthlySalesData
+            }
+
+            if (selectedMetrics.courtUsage) {
+                reportData.courtUsage = courtUsageData
+            }
+
+            if (selectedMetrics.timeAnalysis) {
+                reportData.timeSlots = timeSlotData
+            }
+
+            if (selectedMetrics.customerTypes) {
+                reportData.customerTypes = customerTypeData
+            }
+
+            // Convert the data to the appropriate format
+            let fileContent = ""
+            let fileType = ""
+            let fileName = `futsal-report-${new Date().toISOString().split("T")[0]}`
+
+            switch (format) {
+                case "csv":
+                    fileContent = generateCSV(reportData)
+                    fileType = "text/csv"
+                    fileName += ".csv"
+                    break
+                case "excel":
+                    // In a real app, this would generate an Excel file
+                    // For this demo, we'll use CSV as a substitute
+                    fileContent = generateCSV(reportData)
+                    fileType = "application/vnd.ms-excel"
+                    fileName += ".xlsx"
+                    break
+                case "pdf":
+                    // In a real app, this would generate a PDF
+                    // For this demo, we'll use a text representation
+                    fileContent = generatePDFText(reportData)
+                    fileType = "application/pdf"
+                    fileName += ".pdf"
+                    break
+            }
+
+            // Create a Blob with the file content
+            const blob = new Blob([fileContent], { type: fileType })
+
+            // Create a download link and trigger the download
+            const url = URL.createObjectURL(blob)
+            const link = document.createElement("a")
+            link.href = url
+            link.download = fileName
+            document.body.appendChild(link)
+            link.click()
+
+            // Clean up
+            URL.revokeObjectURL(url)
+            document.body.removeChild(link)
+
+            toast({
+                title: "Report Downloaded",
+                description: `Your ${format.toUpperCase()} report has been downloaded successfully.`,
+                type: "success",
+            })
+        } catch (error) {
+            console.error("Error generating report:", error)
+            toast({
+                title: "Download Failed",
+                description: "There was an error generating your report. Please try again.",
+                type: "error",
+            })
+        } finally {
+            setIsGeneratingFile(false)
+        }
+    }
+
+    // Generate CSV content from data
+    const generateCSV = (data: any) => {
+        let csv = ""
+
+        // Revenue data
+        if (data.revenue) {
+            csv += "REVENUE DATA\n"
+            csv += "Month,Revenue\n"
+            data.revenue.forEach((item: any) => {
+                csv += `${item.name},${item.revenue}\n`
+            })
+            csv += "\n"
+        }
+
+        // Court usage data
+        if (data.courtUsage) {
+            csv += "COURT USAGE DATA\n"
+            csv += "Court,Bookings\n"
+            data.courtUsage.forEach((item: any) => {
+                csv += `${item.name},${item.bookings}\n`
+            })
+            csv += "\n"
+        }
+
+        // Time slot data
+        if (data.timeSlots) {
+            csv += "TIME SLOT DATA\n"
+            csv += "Time Slot,Bookings\n"
+            data.timeSlots.forEach((item: any) => {
+                csv += `${item.name},${item.bookings}\n`
+            })
+            csv += "\n"
+        }
+
+        // Customer type data
+        if (data.customerTypes) {
+            csv += "CUSTOMER TYPE DATA\n"
+            csv += "Type,Percentage\n"
+            data.customerTypes.forEach((item: any) => {
+                csv += `${item.name},${item.value}\n`
+            })
+        }
+
+        return csv
+    }
+
+    // Generate text representation of PDF content
+    const generatePDFText = (data: any) => {
+        let text = "FUTSAL COURT PERFORMANCE REPORT\n"
+        text += `Generated on ${new Date().toLocaleDateString()}\n\n`
+
+        // Revenue data
+        if (data.revenue) {
+            text += "REVENUE DATA\n"
+            text += "Month\tRevenue\n"
+            data.revenue.forEach((item: any) => {
+                text += `${item.name}\t$${item.revenue}\n`
+            })
+            text += "\n"
+        }
+
+        // Court usage data
+        if (data.courtUsage) {
+            text += "COURT USAGE DATA\n"
+            text += "Court\tBookings\n"
+            data.courtUsage.forEach((item: any) => {
+                text += `${item.name}\t${item.bookings}\n`
+            })
+            text += "\n"
+        }
+
+        // Time slot data
+        if (data.timeSlots) {
+            text += "TIME SLOT DATA\n"
+            text += "Time Slot\tBookings\n"
+            data.timeSlots.forEach((item: any) => {
+                text += `${item.name}\t${item.bookings}\n`
+            })
+            text += "\n"
+        }
+
+        // Customer type data
+        if (data.customerTypes) {
+            text += "CUSTOMER TYPE DATA\n"
+            text += "Type\tPercentage\n"
+            data.customerTypes.forEach((item: any) => {
+                text += `${item.name}\t${item.value}%\n`
+            })
+        }
+
+        return text
+    }
+
+    // Mock function to simulate sharing the report
+    const shareReport = (method: string) => {
+        toast({
+            title: "Report Shared",
+            description: `Your report would be shared via ${method} in a real application.`,
+            type: "success",
+        })
     }
 
     // Get date range label
@@ -123,20 +352,6 @@ export default function ReportsPage() {
                 return "Custom Range"
             default:
                 return "Select Range"
-        }
-    }
-
-    // Get export format icon
-    const getFormatIcon = () => {
-        switch (exportFormat) {
-            case "csv":
-                return <FileText className="h-4 w-4 mr-2" />
-            case "excel":
-                return <FileSpreadsheet className="h-4 w-4 mr-2" />
-            case "pdf":
-                return <FilePdf className="h-4 w-4 mr-2" />
-            default:
-                return <Download className="h-4 w-4 mr-2" />
         }
     }
 
@@ -164,15 +379,20 @@ export default function ReportsPage() {
                                     <Label htmlFor="format">Format</Label>
                                     <Select
                                         value={exportFormat}
-                                        onValueChange={(value: "csv" | "excel" | "pdf") => setExportFormat(value)}
+                                        onValueChange={(value: "table" | "summary" | "print" | "csv" | "excel" | "pdf") =>
+                                            setExportFormat(value)
+                                        }
                                     >
                                         <SelectTrigger id="format">
                                             <SelectValue placeholder="Select format" />
                                         </SelectTrigger>
                                         <SelectContent>
-                                            <SelectItem value="csv">CSV</SelectItem>
-                                            <SelectItem value="excel">Excel</SelectItem>
-                                            <SelectItem value="pdf">PDF</SelectItem>
+                                            <SelectItem value="table">Tabular View</SelectItem>
+                                            <SelectItem value="summary">Summary View</SelectItem>
+                                            <SelectItem value="print">Print-Friendly View</SelectItem>
+                                            <SelectItem value="csv">Download CSV</SelectItem>
+                                            <SelectItem value="excel">Download Excel</SelectItem>
+                                            <SelectItem value="pdf">Download PDF</SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
@@ -282,10 +502,500 @@ export default function ReportsPage() {
                         </PopoverContent>
                     </Popover>
 
-                    <Button onClick={handleExport} className="w-full sm:w-auto">
-                        {getFormatIcon()}
-                        Export as {exportFormat.toUpperCase()}
-                    </Button>
+                    <Dialog open={showExportPreview} onOpenChange={setShowExportPreview}>
+                        <DialogTrigger asChild>
+                            <Button onClick={handleExport} disabled={isGeneratingFile} className="w-full sm:w-auto">
+                                {isGeneratingFile ? (
+                                    <>
+                                        <svg
+                                            className="animate-spin -ml-1 mr-3 h-4 w-4 text-white"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <circle
+                                                className="opacity-25"
+                                                cx="12"
+                                                cy="12"
+                                                r="10"
+                                                stroke="currentColor"
+                                                strokeWidth="4"
+                                            ></circle>
+                                            <path
+                                                className="opacity-75"
+                                                fill="currentColor"
+                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                            ></path>
+                                        </svg>
+                                        Processing...
+                                    </>
+                                ) : (
+                                    <>
+                                        {getFormatIcon()}
+                                        {exportFormat === "table" || exportFormat === "summary" || exportFormat === "print"
+                                            ? `View ${exportFormat === "table" ? "Tabular" : exportFormat === "summary" ? "Summary" : "Print-Friendly"} Report`
+                                            : `Download as ${exportFormat.toUpperCase()}`}
+                                    </>
+                                )}
+                            </Button>
+                        </DialogTrigger>
+                        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle className="flex items-center justify-between">
+                                    <span>Report: {getDateRangeLabel()}</span>
+                                    <div className="flex items-center space-x-2">
+                                        <Button variant="outline" size="sm" onClick={() => shareReport("email")}>
+                                            <Mail className="h-4 w-4 mr-2" />
+                                            Email
+                                        </Button>
+                                        <Button variant="outline" size="sm" onClick={() => shareReport("copy")}>
+                                            <Copy className="h-4 w-4 mr-2" />
+                                            Copy
+                                        </Button>
+                                        <Button variant="outline" size="sm" onClick={() => shareReport("print")}>
+                                            <Printer className="h-4 w-4 mr-2" />
+                                            Print
+                                        </Button>
+                                        <Button
+                                            variant="outline"
+                                            size="sm"
+                                            onClick={() => downloadReport(exportFormat === "print" ? "pdf" : "excel")}
+                                        >
+                                            <Download className="h-4 w-4 mr-2" />
+                                            Download
+                                        </Button>
+                                    </div>
+                                </DialogTitle>
+                                <DialogDescription>
+                                    Futsal Court Performance Report • Generated on {new Date().toLocaleDateString()}
+                                </DialogDescription>
+                            </DialogHeader>
+
+                            {exportFormat === "table" && (
+                                <div className="space-y-6">
+                                    {selectedMetrics.revenue && (
+                                        <div>
+                                            <h3 className="text-lg font-medium mb-2">Revenue Analysis</h3>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>Month</TableHead>
+                                                        <TableHead className="text-right">Revenue</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {monthlySalesData.map((item) => (
+                                                        <TableRow key={item.name}>
+                                                            <TableCell>{item.name}</TableCell>
+                                                            <TableCell className="text-right">${item.revenue.toLocaleString()}</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                    <TableRow>
+                                                        <TableCell className="font-bold">Total</TableCell>
+                                                        <TableCell className="text-right font-bold">
+                                                            ${monthlySalesData.reduce((sum, item) => sum + item.revenue, 0).toLocaleString()}
+                                                        </TableCell>
+                                                    </TableRow>
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    )}
+
+                                    {selectedMetrics.courtUsage && (
+                                        <div>
+                                            <h3 className="text-lg font-medium mb-2">Court Usage</h3>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>Court</TableHead>
+                                                        <TableHead className="text-right">Bookings</TableHead>
+                                                        <TableHead className="text-right">Utilization %</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {courtUsageData.map((item) => (
+                                                        <TableRow key={item.name}>
+                                                            <TableCell>{item.name}</TableCell>
+                                                            <TableCell className="text-right">{item.bookings}</TableCell>
+                                                            <TableCell className="text-right">
+                                                                {Math.round((item.bookings / Math.max(...courtUsageData.map((d) => d.bookings))) * 100)}
+                                                                %
+                                                            </TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    )}
+
+                                    {selectedMetrics.timeAnalysis && (
+                                        <div>
+                                            <h3 className="text-lg font-medium mb-2">Time Slot Analysis</h3>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>Time Slot</TableHead>
+                                                        <TableHead className="text-right">Bookings</TableHead>
+                                                        <TableHead className="text-right">% of Total</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {timeSlotData.map((item) => {
+                                                        const totalBookings = timeSlotData.reduce((sum, slot) => sum + slot.bookings, 0)
+                                                        const percentage = ((item.bookings / totalBookings) * 100).toFixed(1)
+
+                                                        return (
+                                                            <TableRow key={item.name}>
+                                                                <TableCell>{item.name}</TableCell>
+                                                                <TableCell className="text-right">{item.bookings}</TableCell>
+                                                                <TableCell className="text-right">{percentage}%</TableCell>
+                                                            </TableRow>
+                                                        )
+                                                    })}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    )}
+
+                                    {selectedMetrics.customerTypes && (
+                                        <div>
+                                            <h3 className="text-lg font-medium mb-2">Customer Demographics</h3>
+                                            <Table>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead>Customer Type</TableHead>
+                                                        <TableHead className="text-right">Percentage</TableHead>
+                                                    </TableRow>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {customerTypeData.map((item) => (
+                                                        <TableRow key={item.name}>
+                                                            <TableCell>{item.name}</TableCell>
+                                                            <TableCell className="text-right">{item.value}%</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                            </Table>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+
+                            {exportFormat === "summary" && (
+                                <div className="space-y-6">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <Card>
+                                            <CardHeader className="pb-2">
+                                                <CardTitle className="text-base">Revenue Summary</CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-muted-foreground">Total Revenue:</span>
+                                                        <span className="font-medium">
+                              ${monthlySalesData.reduce((sum, item) => sum + item.revenue, 0).toLocaleString()}
+                            </span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-muted-foreground">Average Monthly:</span>
+                                                        <span className="font-medium">
+                              $
+                                                            {Math.round(
+                                                                monthlySalesData.reduce((sum, item) => sum + item.revenue, 0) / monthlySalesData.length,
+                                                            ).toLocaleString()}
+                            </span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-muted-foreground">Highest Month:</span>
+                                                        <span className="font-medium">
+                              {monthlySalesData.reduce((max, item) => (item.revenue > max.revenue ? item : max)).name}{" "}
+                                                            ($
+                                                            {monthlySalesData
+                                                                .reduce((max, item) => (item.revenue > max.revenue ? item : max))
+                                                                .revenue.toLocaleString()}
+                                                            )
+                            </span>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+
+                                        <Card>
+                                            <CardHeader className="pb-2">
+                                                <CardTitle className="text-base">Court Usage Summary</CardTitle>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <div className="space-y-2">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-muted-foreground">Total Bookings:</span>
+                                                        <span className="font-medium">
+                              {courtUsageData.reduce((sum, item) => sum + item.bookings, 0)}
+                            </span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-muted-foreground">Most Popular Court:</span>
+                                                        <span className="font-medium">
+                              {courtUsageData.reduce((max, item) => (item.bookings > max.bookings ? item : max)).name} (
+                                                            {
+                                                                courtUsageData.reduce((max, item) => (item.bookings > max.bookings ? item : max))
+                                                                    .bookings
+                                                            }{" "}
+                                                            bookings)
+                            </span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-muted-foreground">Least Popular Court:</span>
+                                                        <span className="font-medium">
+                              {courtUsageData.reduce((min, item) => (item.bookings < min.bookings ? item : min)).name} (
+                                                            {
+                                                                courtUsageData.reduce((min, item) => (item.bookings < min.bookings ? item : min))
+                                                                    .bookings
+                                                            }{" "}
+                                                            bookings)
+                            </span>
+                                                    </div>
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+
+                                    <Card>
+                                        <CardHeader className="pb-2">
+                                            <CardTitle className="text-base">Business Insights</CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="space-y-4">
+                                                <div className="flex items-start gap-2">
+                                                    <CheckSquare className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                                                    <div>
+                                                        <h4 className="font-medium">Peak Hours Opportunity</h4>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            The 6PM-9PM slot accounts for{" "}
+                                                            {Math.round(
+                                                                (timeSlotData[4].bookings /
+                                                                    timeSlotData.reduce((sum, item) => sum + item.bookings, 0)) *
+                                                                100,
+                                                            )}
+                                                            % of all bookings. Consider implementing dynamic pricing with a 15-20% premium during
+                                                            these hours while offering discounts during the 6AM-9AM slot to increase morning
+                                                            utilization.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-2">
+                                                    <CheckSquare className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                                                    <div>
+                                                        <h4 className="font-medium">Court Optimization</h4>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            Court 5 has{" "}
+                                                            {Math.round(
+                                                                ((courtUsageData[0].bookings - courtUsageData[4].bookings) /
+                                                                    courtUsageData[0].bookings) *
+                                                                100,
+                                                            )}
+                                                            % fewer bookings than Court 1. Consider rotating league matches across all courts or
+                                                            offering special promotions specifically for Court 5 to balance usage.
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-start gap-2">
+                                                    <CheckSquare className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                                                    <div>
+                                                        <h4 className="font-medium">Customer Retention Strategy</h4>
+                                                        <p className="text-sm text-muted-foreground">
+                                                            With {customerTypeData[0].value}% of bookings coming from regular customers, implementing
+                                                            a loyalty program could increase retention further. Consider offering a "book 9 sessions,
+                                                            get 1 free" program to incentivize repeat bookings.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+
+                                    {selectedMetrics.timeAnalysis && (
+                                        <Card>
+                                            <CardHeader className="pb-2">
+                                                <CardTitle className="text-base">Time Slot Distribution</CardTitle>
+                                            </CardHeader>
+                                            <CardContent className="h-[200px]">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={timeSlotData}>
+                                                        <CartesianGrid strokeDasharray="3 3" />
+                                                        <XAxis dataKey="name" />
+                                                        <YAxis />
+                                                        <Tooltip formatter={(value) => [`${value}`, "Bookings"]} />
+                                                        <Bar dataKey="bookings" fill="#8884d8" />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </CardContent>
+                                        </Card>
+                                    )}
+                                </div>
+                            )}
+
+                            {exportFormat === "print" && (
+                                <div className="space-y-8 print:space-y-6">
+                                    <div className="text-center mb-6 print:mb-4">
+                                        <h2 className="text-2xl font-bold">Futsal Court Performance Report</h2>
+                                        <p className="text-muted-foreground">
+                                            {getDateRangeLabel()} • Generated on {new Date().toLocaleDateString()}
+                                        </p>
+                                    </div>
+
+                                    {selectedMetrics.revenue && (
+                                        <div>
+                                            <h3 className="text-xl font-semibold mb-4 print:text-lg">Revenue Analysis</h3>
+                                            <div className="h-[250px] print:h-[200px]">
+                                                <ResponsiveContainer width="100%" height="100%">
+                                                    <BarChart data={monthlySalesData}>
+                                                        <CartesianGrid strokeDasharray="3 3" />
+                                                        <XAxis dataKey="name" />
+                                                        <YAxis />
+                                                        <Tooltip formatter={(value) => [`$${value}`, "Revenue"]} />
+                                                        <Bar dataKey="revenue" fill="#3b82f6" />
+                                                    </BarChart>
+                                                </ResponsiveContainer>
+                                            </div>
+                                            <div className="mt-2 text-sm grid grid-cols-2 gap-4">
+                                                <div>
+                                                    <span className="font-medium">Total Revenue:</span> $
+                                                    {monthlySalesData.reduce((sum, item) => sum + item.revenue, 0).toLocaleString()}
+                                                </div>
+                                                <div>
+                                                    <span className="font-medium">Average Monthly:</span> $
+                                                    {Math.round(
+                                                        monthlySalesData.reduce((sum, item) => sum + item.revenue, 0) / monthlySalesData.length,
+                                                    ).toLocaleString()}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <Separator className="print:hidden" />
+
+                                    {selectedMetrics.courtUsage && (
+                                        <div>
+                                            <h3 className="text-xl font-semibold mb-4 print:text-lg">Court Usage</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="h-[250px] print:h-[200px]">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <BarChart data={courtUsageData}>
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="name" />
+                                                            <YAxis />
+                                                            <Tooltip formatter={(value) => [`${value}`, "Bookings"]} />
+                                                            <Bar dataKey="bookings" fill="#82ca9d" />
+                                                        </BarChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h4 className="font-medium">Court Usage Insights</h4>
+                                                    <p className="text-sm">
+                                                        Court 1 is your most popular court with {courtUsageData[0].bookings} bookings, while Court 5
+                                                        has the lowest usage with {courtUsageData[4].bookings} bookings. This represents a{" "}
+                                                        {Math.round(
+                                                            ((courtUsageData[0].bookings - courtUsageData[4].bookings) / courtUsageData[0].bookings) *
+                                                            100,
+                                                        )}
+                                                        % difference in utilization.
+                                                    </p>
+                                                    <p className="text-sm">
+                                                        <span className="font-medium">Recommendation:</span> Consider rotating league matches across
+                                                        all courts or offering special promotions specifically for Court 5 to balance usage.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <Separator className="print:hidden" />
+
+                                    {selectedMetrics.timeAnalysis && (
+                                        <div>
+                                            <h3 className="text-xl font-semibold mb-4 print:text-lg">Time Slot Analysis</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="h-[250px] print:h-[200px]">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <LineChart data={timeSlotData}>
+                                                            <CartesianGrid strokeDasharray="3 3" />
+                                                            <XAxis dataKey="name" />
+                                                            <YAxis />
+                                                            <Tooltip formatter={(value) => [`${value}`, "Bookings"]} />
+                                                            <Line type="monotone" dataKey="bookings" stroke="#8884d8" strokeWidth={2} />
+                                                        </LineChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h4 className="font-medium">Time Slot Insights</h4>
+                                                    <p className="text-sm">
+                                                        The 6PM-9PM slot is your peak time with {timeSlotData[4].bookings} bookings, accounting for{" "}
+                                                        {Math.round(
+                                                            (timeSlotData[4].bookings / timeSlotData.reduce((sum, item) => sum + item.bookings, 0)) *
+                                                            100,
+                                                        )}
+                                                        % of all bookings.
+                                                    </p>
+                                                    <p className="text-sm">
+                                                        <span className="font-medium">Recommendation:</span> Implement dynamic pricing with a 15-20%
+                                                        premium during peak hours while offering discounts during the 6AM-9AM slot to increase
+                                                        morning utilization.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    <Separator className="print:hidden" />
+
+                                    {selectedMetrics.customerTypes && (
+                                        <div>
+                                            <h3 className="text-xl font-semibold mb-4 print:text-lg">Customer Demographics</h3>
+                                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                                <div className="h-[250px] print:h-[200px]">
+                                                    <ResponsiveContainer width="100%" height="100%">
+                                                        <PieChart>
+                                                            <Pie
+                                                                data={customerTypeData}
+                                                                cx="50%"
+                                                                cy="50%"
+                                                                labelLine={false}
+                                                                outerRadius={100}
+                                                                fill="#8884d8"
+                                                                dataKey="value"
+                                                                label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                                                            >
+                                                                {customerTypeData.map((entry, index) => (
+                                                                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                                                ))}
+                                                            </Pie>
+                                                            <Tooltip formatter={(value) => [`${value}%`, "Percentage"]} />
+                                                            <Legend />
+                                                        </PieChart>
+                                                    </ResponsiveContainer>
+                                                </div>
+                                                <div className="space-y-4">
+                                                    <h4 className="font-medium">Customer Insights</h4>
+                                                    <p className="text-sm">
+                                                        Regular customers make up {customerTypeData[0].value}% of your bookings, while new customers
+                                                        account for only {customerTypeData[2].value}%. This indicates strong loyalty but potential
+                                                        challenges in customer acquisition.
+                                                    </p>
+                                                    <p className="text-sm">
+                                                        <span className="font-medium">Recommendation:</span> Implement a "book 9 sessions, get 1
+                                                        free" loyalty program to reward regular customers while running targeted promotions to
+                                                        attract new customers.
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </DialogContent>
+                    </Dialog>
                 </div>
             </div>
 

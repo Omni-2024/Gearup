@@ -16,12 +16,17 @@ import {
 import { MoreHorizontal, Search, Eye, Calendar, Plus, Download } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { CreateBookingDialog } from "@/components/create-booking-dialog"
+import { ViewBookingDialog } from "@/components/view-booking-dialog"
+import { RescheduleBookingDialog } from "@/components/reschedule-booking-dialog"
 
-// Mock data for bookings
+// Update the mock data to include email and phone
 const bookings = [
     {
         id: "#BK-001",
         customer: "John Doe",
+        email: "john.doe@example.com",
+        phone: "+1 (555) 123-4567",
         court: "Court 1",
         date: "2023-05-15",
         time: "6:00 PM - 7:00 PM",
@@ -32,6 +37,8 @@ const bookings = [
     {
         id: "#BK-002",
         customer: "Jane Smith",
+        email: "jane.smith@example.com",
+        phone: "+1 (555) 987-6543",
         court: "Court 2",
         date: "2023-05-14",
         time: "7:00 PM - 8:00 PM",
@@ -42,6 +49,8 @@ const bookings = [
     {
         id: "#BK-003",
         customer: "Robert Johnson",
+        email: "robert.johnson@example.com",
+        phone: "+1 (555) 456-7890",
         court: "Court 3",
         date: "2023-05-13",
         time: "8:00 PM - 9:00 PM",
@@ -52,6 +61,8 @@ const bookings = [
     {
         id: "#BK-004",
         customer: "Emily Davis",
+        email: "emily.davis@example.com",
+        phone: "+1 (555) 234-5678",
         court: "Court 4",
         date: "2023-05-16",
         time: "5:00 PM - 6:00 PM",
@@ -62,6 +73,8 @@ const bookings = [
     {
         id: "#BK-005",
         customer: "Michael Wilson",
+        email: "michael.wilson@example.com",
+        phone: "+1 (555) 876-5432",
         court: "Court 1",
         date: "2023-05-16",
         time: "7:00 PM - 8:00 PM",
@@ -72,6 +85,8 @@ const bookings = [
     {
         id: "#BK-006",
         customer: "Sarah Brown",
+        email: "sarah.brown@example.com",
+        phone: "+1 (555) 345-6789",
         court: "Court 5",
         date: "2023-05-17",
         time: "6:00 PM - 7:00 PM",
@@ -82,6 +97,8 @@ const bookings = [
     {
         id: "#BK-007",
         customer: "David Miller",
+        email: "david.miller@example.com",
+        phone: "+1 (555) 654-3210",
         court: "Court 2",
         date: "2023-05-17",
         time: "8:00 PM - 9:00 PM",
@@ -92,6 +109,8 @@ const bookings = [
     {
         id: "#BK-008",
         customer: "Lisa Anderson",
+        email: "lisa.anderson@example.com",
+        phone: "+1 (555) 789-0123",
         court: "Court 3",
         date: "2023-05-18",
         time: "7:00 PM - 9:00 PM",
@@ -105,12 +124,20 @@ export default function BookingsPage() {
     const [searchTerm, setSearchTerm] = useState("")
     const [statusFilter, setStatusFilter] = useState("all")
     const [courtFilter, setCourtFilter] = useState("all")
+    const [isCreateBookingOpen, setIsCreateBookingOpen] = useState(false)
+
+    // Add state for the new dialogs
+    const [selectedBooking, setSelectedBooking] = useState<(typeof bookings)[0] | null>(null)
+    const [isViewBookingOpen, setIsViewBookingOpen] = useState(false)
+    const [isRescheduleBookingOpen, setIsRescheduleBookingOpen] = useState(false)
 
     const filteredBookings = bookings.filter(
         (booking) =>
             (booking.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
                 booking.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                booking.court.toLowerCase().includes(searchTerm.toLowerCase())) &&
+                booking.court.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                booking.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                booking.phone.toLowerCase().includes(searchTerm.toLowerCase())) &&
             (statusFilter === "all" || booking.status.toLowerCase() === statusFilter.toLowerCase()) &&
             (courtFilter === "all" || booking.court === courtFilter),
     )
@@ -141,6 +168,44 @@ export default function BookingsPage() {
         }
     }
 
+    // Function to handle downloading receipt
+    const handleDownloadReceipt = (booking: (typeof bookings)[0]) => {
+        // In a real app, this would generate a PDF receipt
+        // For this demo, we'll create a simple text receipt
+        const receiptContent = `
+FUTSAL COURT BOOKING RECEIPT
+============================
+Booking ID: ${booking.id}
+Date: ${booking.date}
+Time: ${booking.time}
+Court: ${booking.court}
+
+Customer: ${booking.customer}
+Email: ${booking.email}
+Phone: ${booking.phone}
+
+Amount: $${booking.amount.toFixed(2)}
+Payment Status: ${booking.paymentStatus}
+
+Thank you for your booking!
+    `.trim()
+
+        // Create a Blob with the receipt content
+        const blob = new Blob([receiptContent], { type: "text/plain" })
+        const url = URL.createObjectURL(blob)
+
+        // Create a download link and trigger the download
+        const link = document.createElement("a")
+        link.href = url
+        link.download = `receipt-${booking.id.replace("#", "")}.txt`
+        document.body.appendChild(link)
+        link.click()
+
+        // Clean up
+        URL.revokeObjectURL(url)
+        document.body.removeChild(link)
+    }
+
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -148,7 +213,7 @@ export default function BookingsPage() {
                     <h1 className="text-3xl font-bold tracking-tight">Bookings</h1>
                     <p className="text-muted-foreground">Manage court reservations and bookings</p>
                 </div>
-                <Button className="w-full md:w-auto">
+                <Button className="w-full md:w-auto" onClick={() => setIsCreateBookingOpen(true)}>
                     <Plus className="mr-2 h-4 w-4" />
                     Create New Booking
                 </Button>
@@ -246,15 +311,29 @@ export default function BookingsPage() {
                                                     <DropdownMenuContent align="end">
                                                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                                         <DropdownMenuSeparator />
-                                                        <DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() => {
+                                                                setSelectedBooking(booking)
+                                                                setIsViewBookingOpen(true)
+                                                            }}
+                                                        >
                                                             <Eye className="mr-2 h-4 w-4" />
                                                             View Details
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() => {
+                                                                setSelectedBooking(booking)
+                                                                setIsRescheduleBookingOpen(true)
+                                                            }}
+                                                            disabled={booking.status === "Cancelled"}
+                                                        >
                                                             <Calendar className="mr-2 h-4 w-4" />
                                                             Reschedule
                                                         </DropdownMenuItem>
-                                                        <DropdownMenuItem>
+                                                        <DropdownMenuItem
+                                                            onClick={() => handleDownloadReceipt(booking)}
+                                                            disabled={booking.paymentStatus !== "Paid"}
+                                                        >
                                                             <Download className="mr-2 h-4 w-4" />
                                                             Download Receipt
                                                         </DropdownMenuItem>
@@ -275,6 +354,20 @@ export default function BookingsPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            <CreateBookingDialog open={isCreateBookingOpen} onOpenChange={setIsCreateBookingOpen} />
+
+            {selectedBooking && (
+                <>
+                    <ViewBookingDialog booking={selectedBooking} open={isViewBookingOpen} onOpenChange={setIsViewBookingOpen} />
+
+                    <RescheduleBookingDialog
+                        booking={selectedBooking}
+                        open={isRescheduleBookingOpen}
+                        onOpenChange={setIsRescheduleBookingOpen}
+                    />
+                </>
+            )}
         </div>
     )
 }
