@@ -2,42 +2,103 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { useState, useEffect } from "react";
+import { CourtCard, CourtCardSkeleton } from "./CourtCard";
 
 export const FeaturedPlaces = () => {
+  const [isLoading, setIsLoading] = useState(true);
+  const featuredCourts = [
+    { id: 1, name: "Elite Futsal Arena", location: "Downtown Sports Complex", price: "$25/hr" },
+    { id: 2, name: "Victory Field", location: "Central Park", price: "$20/hr" },
+    { id: 3, name: "Champions Court", location: "Westside Stadium", price: "$22/hr" },
+    { id: 4, name: "Pro Pitch", location: "Eastgate Sports Center", price: "$18/hr" },
+    { id: 5, name: "Golden Goal Arena", location: "South Bay Complex", price: "$30/hr" },
+    { id: 6, name: "Premier Futsal", location: "North Hills Center", price: "$28/hr" },
+    { id: 7, name: "Sports Hub", location: "Marina Bay Area", price: "$24/hr" },
+    { id: 8, name: "Urban Kicks", location: "City Center", price: "$26/hr" },
+  ];
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const responsive = {
+    superLargeDesktop: {
+      breakpoint: { max: 4000, min: 1024 },
+      items: 4
+    },
+    desktop: {
+      breakpoint: { max: 1024, min: 768 },
+      items: 3
+    },
+    tablet: {
+      breakpoint: { max: 768, min: 464 },
+      items: 2
+    },
+    mobile: {
+      breakpoint: { max: 464, min: 0 },
+      items: 1
+    }
+  };
+
   return (
-    <section className="py-4 px-4">
+    <section className="pt-16 pb-48 px-4 bg-[#0D1F1D]">
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-between mb-8 space-y-2">
-          <h2 className="text-2xl font-bold text-white">Featured Places To Play</h2>
-          <p className="text-gray-500">Popular Places To Book Your Court That's Recommends For You</p>
-         
+          <h2 className="text-3xl font-bold text-white">Featured Places To Play</h2>
+          <p className="text-gray-400">Popular Places To Book Your Court That's Recommended For You</p>
         </div>
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
-          <div className="flex gap-2">
-            <button className="px-4 py-2 bg-[#1C3F39] text-white rounded-full">Complete</button>
-            <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full">Partial</button>
-            <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full">Work</button>
+            <div className="flex gap-2">
+              <button className="px-4 py-2 bg-[#1C3F39] text-white rounded-full hover:bg-[#2A5F58] transition-colors">Complete</button>
+              <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full hover:border-[#00FF29] hover:text-[#00FF29] transition-colors">Partial</button>
+              <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full hover:border-[#00FF29] hover:text-[#00FF29] transition-colors">Work</button>
+            </div>
           </div>
-          </div>
-          <Link href="/courts" className="text-[#00FF29] hover:underline">
-            View All →
+          <Link href="/courts" className="text-[#00FF29] hover:underline group flex items-center">
+            View All 
+            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[1].map((item) => (
-            <div key={item} className="bg-[#1C3F39] rounded-lg p-4 hover:scale-105 transition-transform cursor-pointer">
-              <div className="aspect-square relative mb-4 rounded-lg overflow-hidden">
-                <Image src={`/asserts/futsal-${item}.jpg`} alt={`Featured Court ${item}`} fill className="object-cover" />
-              </div>
-              <div className="space-y-2">
-                <div className="h-4 bg-gray-600 rounded w-3/4"></div>
-                <div className="h-4 bg-gray-600 rounded w-1/2"></div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <Carousel 
+          responsive={responsive}
+          infinite={true}
+          showDots={true}
+          dotListClass="custom-dot-list-style"
+          itemClass="px-2"
+          swipeable={true}
+          draggable={true}
+          ssr={true}
+          keyBoardControl={true}
+          containerClass="carousel-container"
+          removeArrowOnDeviceType={["tablet", "mobile"]}
+        >
+          {isLoading ? (
+            Array(8).fill(null).map((_, index) => (
+              <CourtCardSkeleton key={index} />
+            ))
+          ) : (
+            featuredCourts.map((court, index) => (
+              <CourtCard
+                key={court.id}
+                id={court.id}
+                name={court.name}
+                location={court.location}
+                imageIndex={index + 1}
+                price={court.price}
+              />
+            ))
+          )}
+        </Carousel>
       </div>
     </section>
   );

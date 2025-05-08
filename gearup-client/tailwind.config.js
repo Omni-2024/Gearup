@@ -11,8 +11,9 @@ module.exports = {
         primary: '#00FF29',
         secondary: '#1C3F39',
         dark: '#02080D',
-        'dark-green': '#020E07',
-        'gearupgreen': '#297216'
+        darkGreen: '#020E07',
+        gearupgreen: '#297216',
+        lightGreen: '#00ff94',
       },
       container: {
         center: true,

@@ -30,3 +30,60 @@ body {
 .animate-pulse {
   animation: smooth-pulse 2s ease-in-out infinite;
 }
+
+/* Carousel smooth animations */
+.carousel-container {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carousel-item-wrapper {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Custom carousel dots styles */
+.custom-dot-list-style {
+  display: flex;
+  justify-content: center;
+  gap: 0;
+  margin-top: 100px;  /* Increased to 100px */
+  margin-bottom: 60px; /* Increased to 60px */
+  padding: 40px 0; /* Increased to 40px */
+  align-items: center;
+}
+
+.custom-dot-list-style li {
+  list-style: none;
+  margin: 0; /* Remove any margin */
+}
+
+.custom-dot-list-style li button {
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  width: 32px;
+  height: 4px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: skew(-20deg);
+  border-radius: 0;
+  margin: 0; /* Remove any margin */
+  position: relative;
+  z-index: 1;
+  transform-origin: center center;
+}
+
+.custom-dot-list-style li button:hover {
+  background: rgba(0, 255, 41, 0.5);
+  z-index: 2; /* Ensure hover state appears above other dots */
+}
+
+.custom-dot-list-style li.react-multi-carousel-dot--active button {
+  background: #00FF29;
+  width: 64px; /* Increased from 48px to 64px */
+  height: 6px; /* Increased from 4px to 6px */
+  z-index: 3; /* Ensure active dot appears above others */
+  transform: skew(-20deg) translateY(-0px); /* Added slight vertical offset */
+}

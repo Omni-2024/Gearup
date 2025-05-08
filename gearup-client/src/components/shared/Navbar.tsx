@@ -47,7 +47,7 @@ export const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <Link
                   href="/login"
-                  className="px-4 py-1.5 text-sm rounded-full border-2 border-green-500 text-green-500 hover:bg-green-500 hover:text-white transition-colors"
+                  className="px-4 py-0.5 text-sm rounded-full border-2 border-white text-white hover:text-[#00ff94] hover:border-[#00ff94] hover:drop-shadow-[0_0_10px_rgba(0,255,148,0.6)] transition-all duration-300"
                 >
                   LOGIN
                 </Link>
