@@ -34,8 +34,9 @@ export const BookingBenefits = () => {
           {benefits.map((benefit, index) => (
             <div 
               key={index} 
-              className="flex flex-row items-center justify-center text-center w-full max-w-xs hover:transform hover:scale-105 transition-transform duration-300"
+              className="flex flex-row items-center justify-start md:justify-center text-center w-full max-w-xs hover:transform hover:scale-105 transition-transform duration-300"
             >
+              <div className="w-16 flex md:hidden"></div>
               <div className={`w-24 h-24 flex-shrink-0 flex items-center justify-center mr-4 border-1 border-[#41c335] rounded-xl bg-[#E8F5E9]`}>
                 <Image
                   src={benefit.icon}
