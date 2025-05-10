@@ -34,9 +34,9 @@ export const BookingBenefits = () => {
           {benefits.map((benefit, index) => (
             <div 
               key={index} 
-              className="flex flex-col items-center text-center w-full max-w-xs hover:transform hover:scale-105 transition-transform duration-300"
+              className="flex flex-row items-center justify-center text-center w-full max-w-xs hover:transform hover:scale-105 transition-transform duration-300"
             >
-              <div className={`w-24 h-24 flex-shrink-0 flex items-center justify-center mb-6 border-1 border-[#41c335] rounded-xl bg-[#E8F5E9]`}>
+              <div className={`w-24 h-24 flex-shrink-0 flex items-center justify-center mr-4 border-1 border-[#41c335] rounded-xl bg-[#E8F5E9]`}>
                 <Image
                   src={benefit.icon}
                   alt={`${benefit.subtitle}`}
@@ -46,8 +46,8 @@ export const BookingBenefits = () => {
                 />
               </div>
               <div className="text-center">
-                <h3 className="text-2xl md:text-3xl font-bold tracking-wide mb-2 text-black">{benefit.title}</h3>
-                <p className="text-xl md:text-2xl font-semibold text-[#297216]">{benefit.subtitle}</p>
+                <h3 className="text-2xl md:text-3xl font-extrabold tracking-wide mb-1 text-black">{benefit.title}</h3>
+                <p className="text-xl md:text-2xl font-extrabold text-[#297216]">{benefit.subtitle}</p>
               </div>
             </div>
           ))}
