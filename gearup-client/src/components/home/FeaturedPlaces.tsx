@@ -49,7 +49,7 @@ export const FeaturedPlaces = () => {
   };
 
   return (
-    <section className="pt-16 pb-48 px-4 bg-[#0D1F1D]">
+    <section className="py-10 px-4 bg-[#0D1F1D]">
       <div className="container mx-auto">
         <div className="flex flex-col items-center justify-between mb-8 space-y-2">
           <h2 className="text-3xl font-bold text-white">Featured Places To Play</h2>
@@ -58,9 +58,9 @@ export const FeaturedPlaces = () => {
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <div className="flex gap-2">
-              <button className="px-4 py-2 bg-[#1C3F39] text-white rounded-full hover:bg-[#2A5F58] transition-colors">Complete</button>
-              <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full hover:border-[#00FF29] hover:text-[#00FF29] transition-colors">Partial</button>
-              <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full hover:border-[#00FF29] hover:text-[#00FF29] transition-colors">Work</button>
+              <button className="px-4 py-2 bg-[#1C3F39] text-white rounded-full hover:bg-[#2A5F58] transition-colors">Colombo</button>
+              <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full hover:border-[#00FF29] hover:text-[#00FF29] transition-colors">Galle</button>
+              <button className="px-4 py-2 bg-transparent border border-gray-600 text-white rounded-full hover:border-[#00FF29] hover:text-[#00FF29] transition-colors">Dehiwala</button>
             </div>
           </div>
           <Link href="/courts" className="text-[#00FF29] hover:underline group flex items-center">
@@ -73,14 +73,14 @@ export const FeaturedPlaces = () => {
           responsive={responsive}
           infinite={true}
           showDots={true}
-          dotListClass="custom-dot-list-style"
           itemClass="px-2"
           swipeable={true}
           draggable={true}
           ssr={true}
+          dotListClass="custom-dot-list-style"
           keyBoardControl={true}
           containerClass="carousel-container"
-          removeArrowOnDeviceType={["tablet", "mobile"]}
+          // removeArrowOnDeviceType={["tablet", "mobile"]}
         >
           {isLoading ? (
             Array(8).fill(null).map((_, index) => (
@@ -100,6 +100,11 @@ export const FeaturedPlaces = () => {
           )}
         </Carousel>
       </div>
+      <style jsx>{`
+        :global(.custom-dot-list-style) {
+          margin-top: 32px !important;
+        }
+      `}</style>
     </section>
   );
 };
