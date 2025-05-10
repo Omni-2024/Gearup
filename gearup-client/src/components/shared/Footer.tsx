@@ -7,17 +7,27 @@ export const Footer = () => {
     const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="text-white w-full">
+    <footer className="text-white w-full bg-[#031003]">
       <div className="relative mb-0">
         <div className="absolute inset-0 w-full h-full">
+         
+          <Image
+            src="/asserts/Bar.png"
+            alt="Footer background mobile"
+            fill
+            className="object-cover block md:hidden rotate-180 scale-x-[-1] -translate-x-3"
+            priority
+            
+          />
           <Image
             src="/asserts/GU Footer.webp"
-            alt="Footer background"
+            alt="Footer background desktop"
             fill
-            className="object-cover hidden md:block"
+            className="object-cover hidden md:block z-[0]"
             priority
           />
         </div>
+         <div className="inset-0 bg-black/50 md:hidden z-[1] absolute"></div>
         <div className="container mx-auto px-4 relative z-10 py-8">
           <div className="flex flex-col md:flex-row md:justify-end gap-2 mb-8">
             {/* Company Section */}

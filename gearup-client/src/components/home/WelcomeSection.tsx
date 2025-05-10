@@ -19,10 +19,6 @@ export const WelcomeSection = () => {
               fill
               className="object-contain"
               priority
-              onError={(e) => {
-                const target = e.target as HTMLImageElement;
-                target.src = "/asserts/Players.png"; // Fallback image
-              }}
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           </div>

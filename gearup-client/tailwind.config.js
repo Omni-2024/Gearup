@@ -19,6 +19,12 @@ module.exports = {
         center: true,
         padding: '1rem',
       },
+      keyframes: {
+        glow: {
+          '0%, 100%': { opacity: 1 },
+          '50%': { opacity: 0.5 }
+        }
+      },
     },
   },
   plugins: [require('@tailwindcss/forms')],
