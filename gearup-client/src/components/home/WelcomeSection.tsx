@@ -5,9 +5,9 @@ import Link from 'next/link';
 
 export const WelcomeSection = () => {
   return (
-    <section className="relative min-h-screen bg-[#02080D] flex items-center">
+    <section className="relative min-h-screen bg-[#040A0D] flex items-center">
       {/* Green gradient effect in the background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#02080D] via-[#02080D] to-[#297216]/20" />
+      <div className="absolute inset-0 bg-gradient-to-br from-[#040A0D] via-[#040A0D] to-[#297216]/20" />
       
       <div className="container mx-auto px-4 relative z-10 my-5">
         <div className="grid md:grid-cols-2 gap-8 items-center">

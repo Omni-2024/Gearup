@@ -129,8 +129,9 @@ export const FeaturedPlaces = () => {
   }, []);
 
   return (
-    <section className="py-10 px-4 bg-[#0D1F1D]">
+    <section className="py-10 px-4 bg-white">
       <div className="container mx-auto">
+        <div className="bg-[#020e23] rounded-2xl p-8">
         <motion.div 
           className="flex flex-col items-center justify-between mb-8 space-y-2"
           initial="hidden"
@@ -229,6 +230,7 @@ export const FeaturedPlaces = () => {
             )}
           </Carousel>
         </motion.div>
+      </div>
       </div>
       <style jsx>{`
         :global(.custom-dot-list-style) {
