@@ -5,7 +5,7 @@ interface CourtCardProps {
   id: number;
   name: string;
   location: string;
-  imageIndex: number;
+  imagePath: string;
   rating?: number;
   price?: string;
 }
@@ -30,7 +30,7 @@ export const CourtCard: FC<CourtCardProps> = ({
   id,
   name,
   location,
-  imageIndex,
+  imagePath,
   rating = 4.5,
   price = "$20/hr"
 }) => {
@@ -39,7 +39,7 @@ export const CourtCard: FC<CourtCardProps> = ({
       <div className="bg-[#1C3F39] rounded-2xl overflow-hidden shadow-lg transform transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl cursor-pointer">
         <div className="aspect-[4/3] relative">
           <Image
-            src={`/asserts/futsal-${(imageIndex % 3) + 1}.jpg`}
+            src={imagePath}
             alt={name}
             fill
             className="object-cover transition-transform duration-300 hover:scale-110"
