@@ -63,7 +63,7 @@ body {
 
 .custom-dot-list-style li {
   list-style: none;
-  margin: 0; /* Remove any margin */
+  margin: 2; /* Remove any margin */
 }
 
 .custom-dot-list-style li button {
@@ -71,7 +71,7 @@ body {
   background: rgba(255, 255, 255, 0.3);
   width: 32px;
   height: 4px;
-  padding: 0;
+  padding: 2;
   cursor: pointer;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   transform: skew(-20deg);

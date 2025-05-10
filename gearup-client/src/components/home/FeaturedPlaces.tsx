@@ -91,6 +91,38 @@ export const FeaturedPlaces = () => {
       area: "Galle",
       imagePath: "/asserts/futsal-4.jpg"
     },
+    { 
+      id: 9, 
+      name: "Pro Pitch", 
+      location: "Eastgate Sports Center", 
+      price: "$18/hr",
+      area: "Colombo",
+      imagePath: "/asserts/futsal-4.jpg"
+    },
+    { 
+      id: 10, 
+      name: "Pro Pitch", 
+      location: "Eastgate Sports Center", 
+      price: "$18/hr",
+      area: "Colombo",
+      imagePath: "/asserts/futsal-4.jpg"
+    },
+    { 
+      id: 11, 
+      name: "Pro Pitch", 
+      location: "Eastgate Sports Center", 
+      price: "$18/hr",
+      area: "Colombo",
+      imagePath: "/asserts/futsal-4.jpg"
+    },
+    { 
+      id: 12, 
+      name: "Pro Pitch", 
+      location: "Eastgate Sports Center", 
+      price: "$18/hr",
+      area: "Colombo",
+      imagePath: "/asserts/futsal-4.jpg"
+    },
   ];
 
   // Dynamically get unique areas from featuredCourts
@@ -145,8 +177,8 @@ export const FeaturedPlaces = () => {
             Popular Places To Book Your Court That's Recommended For You
           </motion.p>
         </motion.div>
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-row items-center justify-between mb-8">
+          <div className="flex items-center gap-4 order-2 md:order-1">
             <motion.div 
               className="flex gap-2"
               initial={{ opacity: 0, x: -20 }}
@@ -176,10 +208,12 @@ export const FeaturedPlaces = () => {
               ))}
             </motion.div>
           </div>
+      
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
+            className="mb-5 ml-auto order-1 md:order-2"
           >
             <Link href="/courts" className="text-[#00FF29] hover:underline group flex items-center">
               View All 
