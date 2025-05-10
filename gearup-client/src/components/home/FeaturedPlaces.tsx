@@ -78,11 +78,12 @@ export const FeaturedPlaces = () => {
     },
   ];
 
+  // Dynamically get unique areas from featuredCourts
+  const areas = Array.from(new Set(featuredCourts.map(court => court.area)));
+
   const filteredCourts = featuredCourts.filter(court => 
     selectedArea === "all" || court.area === selectedArea
   );
-
-  const areas = ["Colombo", "Galle", "Dehiwala"];
 
   const responsive = {
     superLargeDesktop: {
@@ -139,7 +140,7 @@ export const FeaturedPlaces = () => {
           </div>
           <Link href="/courts" className="text-[#00FF29] hover:underline group flex items-center">
             View All 
-            <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
+            <span className="pl-1 inline-block transition-transform group-hover:translate-x-1">→</span>
           </Link>
         </div>
 

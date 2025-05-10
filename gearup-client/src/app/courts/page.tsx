@@ -73,21 +73,33 @@ const courts = [
 
 export default function CourtsPage() {
   const [selectedArea, setSelectedArea] = useState("all");
-  const areas = ["all", "Colombo", "Galle", "Dehiwala"];
+  
+  // Dynamically get unique areas and add "all" option at the beginning
+  const areas = ["all", ...Array.from(new Set(courts.map(court => court.area)))];
 
   const filteredCourts = courts.filter(court => 
     selectedArea === "all" || court.area === selectedArea
   );
 
+  const getHeaderText = () => {
+    if (selectedArea === "all") {
+      // Get unique areas and join them with commas
+      const allAreas = Array.from(new Set(courts.map(court => court.area))).join(", ");
+      return `${allAreas} Courts`;
+    }
+    return `${selectedArea} Courts`;
+  };
+
   return (
     <div className="min-h-screen bg-[#0D1F1D] py-20 px-4">
       <div className="container mx-auto">
         <motion.h1 
+          key={selectedArea}
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="text-4xl font-bold text-white text-center mb-4"
         >
-          All Courts
+          {getHeaderText()}
         </motion.h1>
         <motion.p 
           initial={{ opacity: 0, y: -20 }}
@@ -114,7 +126,7 @@ export default function CourtsPage() {
                   : 'bg-transparent border border-gray-600 text-white hover:border-[#00FF29] hover:text-[#00FF29]'
               } rounded-full transition-colors capitalize`}
             >
-              {area}
+              {area === "all" ? "All" : area}
             </motion.button>
           ))}
         </div>
