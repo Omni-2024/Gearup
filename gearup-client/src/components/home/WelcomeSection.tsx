@@ -9,7 +9,7 @@ export const WelcomeSection = () => {
       {/* Green gradient effect in the background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#02080D] via-[#02080D] to-[#297216]/20" />
       
-      <div className="container mx-auto px-4 relative z-10">
+      <div className="container mx-auto px-4 relative z-10 my-5">
         <div className="grid md:grid-cols-2 gap-8 items-center">
           {/* Left side with image */}
           <div className="relative w-full h-[400px] md:h-[500px] max-w-lg mx-auto">

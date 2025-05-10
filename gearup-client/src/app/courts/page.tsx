@@ -131,15 +131,23 @@ export default function CourtsPage() {
                 initial={{ opacity: 0, scale: 0.8 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.8 }}
-                transition={{ duration: 0.3 }}
+                transition={{ 
+                  duration: 0.3,
+                  layout: { duration: 0.3 }
+                }}
               >
-                <CourtCard
-                  id={court.id}
-                  name={court.name}
-                  location={court.location}
-                  imagePath={court.imagePath}
-                  price={court.price}
-                />
+                <motion.div
+                  whileHover={{ scale: 1.02 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <CourtCard
+                    id={court.id}
+                    name={court.name}
+                    location={court.location}
+                    imagePath={court.imagePath}
+                    price={court.price}
+                  />
+                </motion.div>
               </motion.div>
             ))}
           </AnimatePresence>
