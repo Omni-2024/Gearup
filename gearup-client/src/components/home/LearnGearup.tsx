@@ -50,7 +50,7 @@ export const LearnGearup = () => {
       <h1 className="text-4xl font-bold text-center text-white mb-12">
         LEARN GEARUP
       </h1>
-      <div className="max-w-3xl mx-auto px-4">
+      <div className="max-w-5xl mx-auto px-4">
         {learnItems.map((item) => (
           <div
             key={item.id}
