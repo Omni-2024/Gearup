@@ -94,3 +94,22 @@ body {
   z-index: 3; /* Ensure active dot appears above others */
   transform: skew(-20deg) translateY(-0px); /* Added slight vertical offset */
 }
+
+.welcome-glow-effect {
+  position: relative;
+  overflow: hidden;
+}
+
+.welcome-glow-effect::after {
+  content: "";
+  position: absolute;
+  background-color: #79e840cc;
+  border-radius: 50%;
+  box-shadow: 0 250px 2000px 50px #79e84080;
+  height: 350px;
+  width: 350px;
+  right: -175px;
+  top: -350px;
+  pointer-events: none;
+  z-index: 1;
+}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const WelcomeSection = () => {
   return (
-    <section className="relative min-h-screen bg-[#040A0D] flex items-center">
+    <section className="relative min-h-screen bg-[#040A0D] flex items-center welcome-glow-effect">
       {/* Green gradient effect in the background */}
       <div className="absolute inset-0 bg-gradient-to-br from-[#040A0D] via-[#040A0D] to-[#297216]/20" />
       

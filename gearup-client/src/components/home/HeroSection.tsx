@@ -7,12 +7,19 @@ export const HeroSection = () => {
   return (
     <section className="relative h-screen">
       <div className="absolute inset-0">
-         <h1 className="absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-5 md:-translate-y-1/5 text-6xl md:text-8xl font-black text-white z-10 whitespace-nowrap md:tracking-[.55em] tracking-widest">Book Now</h1>
+         <h1 className="flex md:hidden absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-5 md:-translate-y-1/5 text-6xl md:text-8xl font-black text-white z-10 whitespace-nowrap md:tracking-[.55em] tracking-widest">Book Now</h1>
         <Image
           src="/asserts/GU Web Cover BG.png"
           alt="Back Image"
           fill
           className="object-cover z-[5]"
+          priority
+        />
+        <Image
+          src="/asserts/BookNow.png"
+          alt="Book Now"
+          fill
+          className="object-cover z-10 hidden md:flex"
           priority
         />
         <Image
