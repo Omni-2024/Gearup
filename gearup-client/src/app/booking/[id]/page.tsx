@@ -4,10 +4,18 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { fetchCourtById, fetchAvailableSlots, bookCourt } from '@/services/courtService';
-import type { Court } from '@/types';
 import { useSnapshot } from 'valtio';
 import { store } from '@/state/store';
+import { mockFetchCourtById, mockFetchAvailableSlots, mockBookCourt } from '@/data/tempBookingData';
+
+interface Court {
+  id: string;
+  name: string;
+  location: string;
+  imagePath: string;
+  description?: string;
+  price: string;
+}
 
 interface TimeSlot {
   id: string;
@@ -42,10 +50,10 @@ export default function BookingPage() {
 
       try {
         setIsLoading(true);
-        const response = await fetchCourtById(parseInt(params.id as string));
+        const response = await mockFetchCourtById(params.id as string);
         setCourt(response.data);
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load court details');
+        setError(err.message || 'Failed to load court details');
       } finally {
         setIsLoading(false);
       }
@@ -60,10 +68,10 @@ export default function BookingPage() {
       if (!court) return;
 
       try {
-        const response = await fetchAvailableSlots(court.id, selectedDate);
+        const response = await mockFetchAvailableSlots(court.id, selectedDate);
         setAvailableSlots(response.data);
       } catch (err: any) {
-        setError(err.response?.data?.message || 'Failed to load available slots');
+        setError(err.message || 'Failed to load available slots');
       }
     };
 
@@ -75,16 +83,17 @@ export default function BookingPage() {
 
     try {
       setIsBooking(true);
-      await bookCourt({
+      await mockBookCourt({
         courtId: court.id,
         date: selectedDate,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
       });
 
-      router.push('/bookings'); // Redirect to bookings page after successful booking
+      // Show success animation before redirecting
+      router.push('/profile'); // Redirect to profile page after successful booking
     } catch (err: any) {
-      setError(err.response?.data?.message || 'Failed to book court');
+      setError(err.message || 'Failed to book court');
     } finally {
       setIsBooking(false);
     }
@@ -129,8 +138,12 @@ export default function BookingPage() {
   return (
     <div className="min-h-screen bg-[#0D1F1D] py-20 px-4">
       <div className="container mx-auto max-w-4xl">
-        {/* Court Details */}
-        <div className="bg-[#1C3F39] rounded-2xl overflow-hidden shadow-lg mb-8">
+        {/* Court Details Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-[#1C3F39] rounded-2xl overflow-hidden shadow-lg mb-8"
+        >
           <div className="aspect-[16/9] relative">
             <Image
               src={court.imagePath}
@@ -168,10 +181,15 @@ export default function BookingPage() {
               <p className="text-gray-400">{court.description}</p>
             )}
           </div>
-        </div>
+        </motion.div>
 
         {/* Booking Section */}
-        <div className="bg-[#1C3F39] rounded-2xl p-6 shadow-lg">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="bg-[#1C3F39] rounded-2xl p-6 shadow-lg"
+        >
           <h2 className="text-2xl font-bold text-white mb-6">Book a Slot</h2>
           
           {/* Date Selection */}
@@ -183,7 +201,7 @@ export default function BookingPage() {
               onChange={(e) => setSelectedDate(e.target.value)}
               min={new Date().toISOString().split('T')[0]}
               max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-              className="w-full px-4 py-2 bg-transparent border border-[#79e840] rounded text-white focus:border-[#79e840] focus:outline-none focus:shadow-[0_0_3px_#79e840]"
+              className="w-full px-4 py-2 bg-[#0D1F1D] border border-[#79e840] rounded text-white focus:border-[#00FF29] focus:outline-none focus:ring-1 focus:ring-[#00FF29]"
             />
           </div>
 
@@ -206,11 +224,11 @@ export default function BookingPage() {
                       selectedSlot?.id === slot.id
                         ? 'bg-[#00FF29] text-black'
                         : slot.isAvailable
-                        ? 'bg-transparent border border-[#79e840] text-white hover:border-[#00FF29] hover:text-[#00FF29]'
-                        : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                        ? 'bg-[#0D1F1D] border border-[#79e840] text-white hover:border-[#00FF29] hover:text-[#00FF29]'
+                        : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
                     }`}
                   >
-                    <div className="text-sm">{slot.startTime}</div>
+                    <div className="text-sm font-medium">{slot.startTime}</div>
                     <div className="text-xs opacity-75">${slot.price}</div>
                   </motion.button>
                 ))}
@@ -219,18 +237,20 @@ export default function BookingPage() {
           </div>
 
           {/* Booking Button */}
-          <button
+          <motion.button
             onClick={handleBooking}
             disabled={!selectedSlot || isBooking}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             className={`w-full py-3 rounded-full font-medium transition-colors ${
               selectedSlot && !isBooking
                 ? 'bg-[#00FF29] text-black hover:bg-[#00CC21]'
-                : 'bg-gray-700 text-gray-500 cursor-not-allowed'
+                : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
             }`}
           >
             {isBooking ? 'Booking...' : 'Confirm Booking'}
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
       </div>
     </div>
   );
