@@ -4,6 +4,7 @@ import { HeroSection } from '@/components/home/HeroSection';
 import { WelcomeSection } from '@/components/home/WelcomeSection';
 import { FeaturedPlaces } from '@/components/home/FeaturedPlaces';
 import { BookingBenefits } from '@/components/home/BookingBenefits';
+import { LearnGearup } from '@/components/home/LearnGearup';
 import { PartnerSection } from '@/components/home/PartnerSection';
 import { Footer } from '@/components/shared/Footer';
 
@@ -14,6 +15,7 @@ export default function Home() {
       <WelcomeSection />
       <FeaturedPlaces />
       <BookingBenefits />
+      <LearnGearup />
       <PartnerSection />
       <Footer />
     </main>
