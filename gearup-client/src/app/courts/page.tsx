@@ -14,6 +14,7 @@ export default function CourtsPage() {
   const [selectedArea, setSelectedArea] = useState('all');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [areas, setAreas] = useState<string[]>(['all']);
   
   const router = useRouter();
   const snap = useSnapshot(store);
@@ -29,9 +30,16 @@ export default function CourtsPage() {
 
         setIsLoading(true);
         const response = await fetchCourts();
-        setCourts(response.data);
+        // Ensure response.data is an array or default to empty array
+        const courtsData = Array.isArray(response?.data) ? response.data : [];
+        setCourts(courtsData);
+        
+        // Update areas after courts are loaded
+        const uniqueAreas = Array.from(new Set(courtsData.map(court => court.area)));
+        setAreas(['all', ...uniqueAreas]);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load courts');
+        setCourts([]); // Reset courts to empty array on error
       } finally {
         setIsLoading(false);
       }
@@ -40,12 +48,9 @@ export default function CourtsPage() {
     loadCourts();
   }, [snap.user, router]);
 
-  // Dynamically get unique areas and add "all" option at the beginning
-  const areas = ["all", ...Array.from(new Set(courts.map(court => court.area)))];
-
-  const filteredCourts = courts.filter(court => 
+  const filteredCourts = Array.isArray(courts) ? courts.filter(court => 
     selectedArea === "all" || court.area === selectedArea
-  );
+  ) : [];
 
   const getHeaderText = () => {
     if (selectedArea === "all") {
