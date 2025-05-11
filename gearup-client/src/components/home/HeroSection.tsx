@@ -35,7 +35,7 @@ export const HeroSection = () => {
       <div className="relative z-20 h-full flex flex-col items-center justify-end pb-20">
         <Link href="/courts">
           <div className="animate-pulse bg-transparent rounded-full px-8 py-3 border-2 border-[#00ff94] hover:scale-105 transition-all duration-300">
-            <span className="font-bold text-xl bg-gradient-to-r from-[#00ffff] to-[#00ff94] text-transparent bg-clip-text">
+            <span className="font-bold text-xs bg-gradient-to-r from-[#00ffff] to-[#00ff94] text-transparent bg-clip-text">
               EXPLORE COURTS
             </span>
           </div>

@@ -37,12 +37,12 @@ export const PartnerSection = () => {
       <div className="absolute inset-0 bg-black/50 z-[1]" />
       
       <div className="container mx-auto px-4 relative z-[2] w-full flex items-center justify-center">
-        <div className="flex flex-col md:flex-row gap-8 items-center w-full">
+        <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl">
           {/* Text content - left side on desktop */}
-          <div className="w-full md:w-1/2">
-            <div className='flex flex-col text-center md:text-left justify-center mb-8 md:mb-0'>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Become A Partner</h2>
-              <h3 className="text-5xl md:text-6xl font-bold mb-4 text-white leading-tight">
+          <div className="w-full md:w-[55%]">
+            <div className='flex flex-col text-center md:text-left justify-center mb-4 md:mb-0'>
+              <h2 className="text-3xl md:text-4xl font-bold mb-2 text-white">Become A Partner</h2>
+              <h3 className="text-5xl md:text-6xl font-bold mb-2 text-white leading-tight">
                 Make your<br />
                 Bookings at<br />
                 <span className="text-[#00FF29]">GEARUP</span>
@@ -51,8 +51,8 @@ export const PartnerSection = () => {
           </div>
           
           {/* Form - right side on desktop */}
-          <div className="w-full md:w-1/2">
-            <form onSubmit={handleSubmit} className="space-y-6 w-full md:max-w-md">
+          <div className="w-full md:w-[45%] flex justify-start">
+            <form onSubmit={handleSubmit} className="space-y-3 w-full max-w-xs">
               <div className="space-y-2">
                 <label htmlFor="name" className="block text-sm font-medium text-white">Name</label>
                 <input
