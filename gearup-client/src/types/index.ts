@@ -1,5 +1,5 @@
 export interface Court {
-  id: number;
+  id: string;
   name: string;
   type: 'Indoor' | 'Outdoor' | 'Covered';
   size: '5-a-side' | '7-a-side' | '11-a-side';
@@ -9,11 +9,12 @@ export interface Court {
   description?: string;
   imagePath: string;
   rating?: number;
+  galleryImages: string[];
   status: 'Available' | 'Booked' | 'Maintenance';
 }
 
 export interface Venue {
-  id: number;
+  id: string;
   name: string;
   location: string;
   area: string;
@@ -21,7 +22,7 @@ export interface Venue {
 }
 
 export interface User {
-  id: number;
+  id: string;
   name: string;
   email: string;
   role: 'USER' | 'ADMIN';
@@ -30,8 +31,8 @@ export interface User {
 
 export interface Booking {
   id: string;
-  courtId: number;
-  userId: number;
+  courtId: string;
+  userId: string;
   date: string;
   startTime: string;
   endTime: string;
