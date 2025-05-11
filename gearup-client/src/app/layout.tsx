@@ -17,6 +17,10 @@ import { StoreInitializer } from "@/components/shared/StoreInitializer";
 export const metadata = {
     title: 'Futsal Booking Platform',
     description: 'Book futsal courts with PayHere integration',
+    icons: {
+        icon: '/GU.png',
+        apple: '/GU.png',
+    },
 };
 
 export default function RootLayout({
