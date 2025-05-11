@@ -1,7 +1,12 @@
 import api from '@/lib/axios';
 import type { Court } from '@/types';
+import { tempCourts } from '@/data/tempCourtData';
 
-export const fetchCourts = () => api.get('/courts');
+// Using temporary data for development
+export const fetchCourts = () => {
+    // Return promise to maintain same interface as real API
+    return Promise.resolve({ data: tempCourts });
+};
 
 export const fetchCourtById = (id: number) => api.get(`/courts/${id}`);
 
