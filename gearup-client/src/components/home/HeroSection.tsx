@@ -5,7 +5,7 @@ import Link from 'next/link';
 
 export const HeroSection = () => {
   return (
-    <section className="relative h-screen">
+    <section className="relative h-screen hero-glow-effect">
       <div className="absolute inset-0">
          <h1 className="flex md:hidden absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-5 md:-translate-y-1/5 text-6xl md:text-8xl font-black text-white z-10 whitespace-nowrap md:tracking-[.55em] tracking-widest">Book Now</h1>
         <Image
@@ -30,7 +30,7 @@ export const HeroSection = () => {
           priority
         />
       </div>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-[#02080D]/90" />
+      <div className="absolute bottom-0 left-0 right-0 h-[50px] bg-gradient-to-t from-[#02080D]/90 to-transparent z-50" />
       
       <div className="relative z-20 h-full flex flex-col items-center justify-end pb-20">
         <Link href="/courts">

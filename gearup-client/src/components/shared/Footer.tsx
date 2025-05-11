@@ -91,6 +91,9 @@ export const Footer = () => {
               </Link>
             </div>
           </div>
+          <div className="text-center text-xs text-gray-400 mt-4">
+            Icons made from <a href="https://www.onlinewebfonts.com/icon" className="hover:text-white">svg icons</a> is licensed by CC BY 4.0
+          </div>
         </div>
       </div>
     </footer>

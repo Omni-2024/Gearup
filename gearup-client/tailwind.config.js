@@ -1,5 +1,6 @@
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+import { Config } from 'tailwindcss';
+
+const config = {
   content: [
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
@@ -15,6 +16,9 @@ module.exports = {
         gearupgreen: '#297216',
         lightGreen: '#00ff94',
       },
+      fontFamily: {
+        'helvetica-neue-lt': ['HelveticaNeueLTW06-93BlkExtObl', 'serif'],
+      },
       container: {
         center: true,
         padding: '1rem',
@@ -28,4 +32,6 @@ module.exports = {
     },
   },
   plugins: [require('@tailwindcss/forms')],
-}
+};
+
+export default config;
