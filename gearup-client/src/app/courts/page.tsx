@@ -15,6 +15,12 @@ export default function CourtsPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [areas, setAreas] = useState<string[]>(['all']);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    type: 'all',
+    priceRange: { min: 0, max: 10000 },
+    minRating: 0,
+  });
   
   const router = useRouter();
   const snap = useSnapshot(store);
@@ -22,7 +28,6 @@ export default function CourtsPage() {
   useEffect(() => {
     const loadCourts = async () => {
       try {
-        // Ensure user is logged in
         if (!snap.user) {
           router.push('/login');
           return;
@@ -30,16 +35,14 @@ export default function CourtsPage() {
 
         setIsLoading(true);
         const response = await fetchCourts();
-        // Ensure response.data is an array or default to empty array
         const courtsData = Array.isArray(response?.data) ? response.data : [];
         setCourts(courtsData);
         
-        // Update areas after courts are loaded
         const uniqueAreas = Array.from(new Set(courtsData.map(court => court.area)));
         setAreas(['all', ...uniqueAreas]);
       } catch (err: any) {
         setError(err.response?.data?.message || 'Failed to load courts');
-        setCourts([]); // Reset courts to empty array on error
+        setCourts([]);
       } finally {
         setIsLoading(false);
       }
@@ -48,13 +51,20 @@ export default function CourtsPage() {
     loadCourts();
   }, [snap.user, router]);
 
-  const filteredCourts = Array.isArray(courts) ? courts.filter(court => 
-    selectedArea === "all" || court.area === selectedArea
-  ) : [];
+  const filteredCourts = Array.isArray(courts) ? courts.filter(court => {
+    const areaMatch = selectedArea === "all" || court.area === selectedArea;
+    const typeMatch = filters.type === 'all' || court.type === filters.type;
+    const priceMatch = (
+      parseInt(court.price) >= filters.priceRange.min &&
+      parseInt(court.price) <= filters.priceRange.max
+    );
+    const ratingMatch = (court.rating || 0) >= filters.minRating;
+
+    return areaMatch && typeMatch && priceMatch && ratingMatch;
+  }) : [];
 
   const getHeaderText = () => {
     if (selectedArea === "all") {
-      // Get unique areas and join them with commas
       const allAreas = Array.from(new Set(courts.map(court => court.area))).join(", ");
       return `${allAreas} Courts`;
     }
@@ -124,7 +134,8 @@ export default function CourtsPage() {
           Find and book your perfect court
         </motion.p>
         
-        <div className="flex justify-center gap-2 mb-12">
+        {/* Area filter buttons */}
+        <div className="flex justify-center gap-2 mb-6">
           {areas.map((area, index) => (
             <motion.button
               key={area}
@@ -144,6 +155,97 @@ export default function CourtsPage() {
             </motion.button>
           ))}
         </div>
+
+        {/* Filter toggle button */}
+        <div className="flex justify-center mb-6">
+          <button
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+            className="bg-[#1C3F39] text-white px-6 py-2 rounded-full hover:bg-[#2A5A52] transition-colors flex items-center gap-2"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" />
+            </svg>
+            Filters
+          </button>
+        </div>
+
+        {/* Sliding filter panel */}
+        <motion.div 
+          initial={false}
+          animate={{ height: isFilterOpen ? 'auto' : 0 }}
+          className="overflow-hidden mb-8"
+        >
+          <div className="bg-[#1C3F39] rounded-lg p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Court Type Filter */}
+            <div>
+              <h3 className="text-white font-medium mb-3">Court Type</h3>
+              <div className="space-y-2">
+                {['all', 'Indoor', 'Outdoor', 'Covered'].map(type => (
+                  <button
+                    key={type}
+                    onClick={() => setFilters(prev => ({ ...prev, type }))}
+                    className={`block w-full text-left px-4 py-2 rounded ${
+                      filters.type === type
+                        ? 'bg-[#00FF29] text-black'
+                        : 'text-white hover:bg-[#2A5A52]'
+                    } transition-colors`}
+                  >
+                    {type === 'all' ? 'All Types' : type}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Price Range Filter */}
+            <div>
+              <h3 className="text-white font-medium mb-3">Price Range</h3>
+              <div className="space-y-4">
+                <input
+                  type="range"
+                  min="0"
+                  max="10000"
+                  step="500"
+                  value={filters.priceRange.max}
+                  onChange={(e) => setFilters(prev => ({
+                    ...prev,
+                    priceRange: { ...prev.priceRange, max: parseInt(e.target.value) }
+                  }))}
+                  className="w-full accent-[#00FF29]"
+                />
+                <div className="text-white">
+                  Max Price: Rs.{filters.priceRange.max}
+                </div>
+              </div>
+            </div>
+
+            {/* Rating Filter */}
+            <div>
+              <h3 className="text-white font-medium mb-3">Minimum Rating</h3>
+              <div className="flex gap-2">
+                {[0, 3, 3.5, 4, 4.5].map(rating => (
+                  <button
+                    key={rating}
+                    onClick={() => setFilters(prev => ({ ...prev, minRating: rating }))}
+                    className={`px-4 py-2 rounded ${
+                      filters.minRating === rating
+                        ? 'bg-[#00FF29] text-black'
+                        : 'text-white hover:bg-[#2A5A52]'
+                    } transition-colors flex items-center gap-1`}
+                  >
+                    {rating === 0 ? 'All' : (
+                      <>
+                        {rating}
+                        <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118l-2.8-2.034c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.95-.69l1.07-3.292z" />
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.div 
           layout
@@ -172,6 +274,7 @@ export default function CourtsPage() {
                     location={court.location}
                     imagePath={court.imagePath}
                     price={court.price}
+                    rating={court.rating}
                   />
                 </motion.div>
               </motion.div>

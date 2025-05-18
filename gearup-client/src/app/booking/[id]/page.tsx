@@ -25,11 +25,14 @@ interface TimeSlot {
   price: number;
 }
 
+type BookingMethod = 'one-time' | 'permanent';
+
 export default function BookingPage() {
   const params = useParams();
   const router = useRouter();
   const snap = useSnapshot(store);
   
+  const [bookingMethod, setBookingMethod] = useState<BookingMethod | null>(null);
   const [court, setCourt] = useState<Court | null>(null);
   const [selectedDate, setSelectedDate] = useState<string>(
     new Date().toISOString().split('T')[0]
@@ -79,7 +82,7 @@ export default function BookingPage() {
   }, [court, selectedDate]);
 
   const handleBooking = async () => {
-    if (!court || !selectedSlot) return;
+    if (!court || !selectedSlot || !bookingMethod) return;
 
     try {
       setIsBooking(true);
@@ -88,6 +91,7 @@ export default function BookingPage() {
         date: selectedDate,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
+        bookingType: bookingMethod,
       });
 
       // Show success animation before redirecting
@@ -191,65 +195,112 @@ export default function BookingPage() {
           className="bg-[#1C3F39] rounded-2xl p-6 shadow-lg"
         >
           <h2 className="text-2xl font-bold text-white mb-6">Book a Slot</h2>
-          
-          {/* Date Selection */}
-          <div className="mb-6">
-            <label className="block text-gray-400 mb-2">Select Date</label>
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              min={new Date().toISOString().split('T')[0]}
-              max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
-              className="w-full px-4 py-2 bg-[#0D1F1D] border border-[#79e840] rounded text-white focus:border-[#00FF29] focus:outline-none focus:ring-1 focus:ring-[#00FF29]"
-            />
-          </div>
 
-          {/* Time Slots */}
-          <div className="mb-6">
-            <label className="block text-gray-400 mb-2">Available Time Slots</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              <AnimatePresence mode="popLayout">
-                {availableSlots.map((slot) => (
-                  <motion.button
-                    key={slot.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.9 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setSelectedSlot(slot)}
-                    disabled={!slot.isAvailable}
-                    className={`p-3 rounded-lg text-center transition-colors ${
-                      selectedSlot?.id === slot.id
-                        ? 'bg-[#00FF29] text-black'
-                        : slot.isAvailable
-                        ? 'bg-[#0D1F1D] border border-[#79e840] text-white hover:border-[#00FF29] hover:text-[#00FF29]'
-                        : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
-                    }`}
-                  >
-                    <div className="text-sm font-medium">{slot.startTime}</div>
-                    <div className="text-xs opacity-75">${slot.price}</div>
-                  </motion.button>
-                ))}
-              </AnimatePresence>
+          {/* Booking Method Selection */}
+          <div className="mb-8">
+            <label className="block text-gray-400 mb-4">Select Booking Type</label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setBookingMethod('one-time')}
+                className={`p-6 rounded-lg text-left border ${
+                  bookingMethod === 'one-time'
+                    ? 'bg-[#00FF29] border-[#00FF29] text-black'
+                    : 'bg-[#0D1F1D] border-[#79e840] text-white hover:border-[#00FF29]'
+                }`}
+              >
+                <h3 className="text-lg font-bold mb-2">One-Time Booking</h3>
+                <p className={`text-sm ${
+                  bookingMethod === 'one-time' ? 'text-black/75' : 'text-gray-400'
+                }`}>
+                  Reserve the futsal court for a single session of your choice.
+                </p>
+              </motion.button>
+
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setBookingMethod('permanent')}
+                className={`p-6 rounded-lg text-left border ${
+                  bookingMethod === 'permanent'
+                    ? 'bg-[#00FF29] border-[#00FF29] text-black'
+                    : 'bg-[#0D1F1D] border-[#79e840] text-white hover:border-[#00FF29]'
+                }`}
+              >
+                <h3 className="text-lg font-bold mb-2">Permanent Booking</h3>
+                <p className={`text-sm ${
+                  bookingMethod === 'permanent' ? 'text-black/75' : 'text-gray-400'
+                }`}>
+                  Secure your dedicated futsal court for extended periods, ensuring regular access.
+                </p>
+              </motion.button>
             </div>
           </div>
 
-          {/* Booking Button */}
-          <motion.button
-            onClick={handleBooking}
-            disabled={!selectedSlot || isBooking}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`w-full py-3 rounded-full font-medium transition-colors ${
-              selectedSlot && !isBooking
-                ? 'bg-[#00FF29] text-black hover:bg-[#00CC21]'
-                : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {isBooking ? 'Booking...' : 'Confirm Booking'}
-          </motion.button>
+          {/* Show date/time selection only after booking method is selected */}
+          {bookingMethod && (
+            <>
+              {/* Date Selection */}
+              <div className="mb-6">
+                <label className="block text-gray-400 mb-2">Select Date</label>
+                <input
+                  type="date"
+                  value={selectedDate}
+                  onChange={(e) => setSelectedDate(e.target.value)}
+                  min={new Date().toISOString().split('T')[0]}
+                  max={new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0]}
+                  className="w-full px-4 py-2 bg-[#0D1F1D] border border-[#79e840] rounded text-white focus:border-[#00FF29] focus:outline-none focus:ring-1 focus:ring-[#00FF29]"
+                />
+              </div>
+
+              {/* Time Slots */}
+              <div className="mb-6">
+                <label className="block text-gray-400 mb-2">Available Time Slots</label>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  <AnimatePresence mode="popLayout">
+                    {availableSlots.map((slot) => (
+                      <motion.button
+                        key={slot.id}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setSelectedSlot(slot)}
+                        disabled={!slot.isAvailable}
+                        className={`p-3 rounded-lg text-center transition-colors ${
+                          selectedSlot?.id === slot.id
+                            ? 'bg-[#00FF29] text-black'
+                            : slot.isAvailable
+                            ? 'bg-[#0D1F1D] border border-[#79e840] text-white hover:border-[#00FF29] hover:text-[#00FF29]'
+                            : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
+                        }`}
+                      >
+                        <div className="text-sm font-medium">{slot.startTime}</div>
+                        <div className="text-xs opacity-75">${slot.price}</div>
+                      </motion.button>
+                    ))}
+                  </AnimatePresence>
+                </div>
+              </div>
+
+              {/* Booking Button */}
+              <motion.button
+                onClick={handleBooking}
+                disabled={!selectedSlot || isBooking}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className={`w-full py-3 rounded-full font-medium transition-colors ${
+                  selectedSlot && !isBooking
+                    ? 'bg-[#00FF29] text-black hover:bg-[#00CC21]'
+                    : 'bg-gray-700/50 text-gray-500 cursor-not-allowed'
+                }`}
+              >
+                {isBooking ? 'Booking...' : 'Confirm Booking'}
+              </motion.button>
+            </>
+          )}
         </motion.div>
       </div>
     </div>

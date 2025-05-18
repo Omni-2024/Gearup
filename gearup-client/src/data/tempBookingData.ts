@@ -51,6 +51,7 @@ export const mockBookCourt = async (bookingData: {
   date: string;
   startTime: string;
   endTime: string;
+  bookingType: 'one-time' | 'permanent';
 }) => {
   await delay(1000); // Simulate network delay
   

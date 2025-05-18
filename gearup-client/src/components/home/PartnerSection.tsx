@@ -51,7 +51,7 @@ export const PartnerSection = () => {
           </div>
           
           {/* Form - right side on desktop */}
-          <div className="w-full md:w-[45%] flex justify-start">
+          <div className="w-full md:w-[45%] flex justify-center md:justify-start">
             <form onSubmit={handleSubmit} className="space-y-3 w-full max-w-xs">
               <div className="space-y-2">
                 <label htmlFor="name" className="block text-sm font-medium text-white">Name</label>
