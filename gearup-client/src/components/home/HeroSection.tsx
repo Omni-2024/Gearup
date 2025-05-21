@@ -7,7 +7,7 @@ export const HeroSection = () => {
   return (
     <section className="relative h-screen hero-glow-effect">
       <div className="absolute inset-0">
-         <h1 className="flex md:hidden absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-5 md:-translate-y-1/5 text-6xl md:text-8xl font-black text-white z-10 whitespace-nowrap md:tracking-[.55em] tracking-widest">Book Now</h1>
+         {/* <h1 className="flex md:hidden absolute top-1/5 left-1/2 transform -translate-x-1/2 -translate-y-5 md:-translate-y-1/5 text-6xl md:text-8xl font-black text-white z-10 whitespace-nowrap md:tracking-[.55em] tracking-widest">Book Now</h1> */}
         <Image
           src="/asserts/GU Web Cover BG.png"
           alt="Back Image"
@@ -34,10 +34,15 @@ export const HeroSection = () => {
       
       <div className="relative z-20 h-full flex flex-col items-center justify-end pb-20">
         <Link href="/courts">
-          <div className="animate-pulse bg-transparent rounded-full px-8 py-3 border-2 border-[#00ff94] hover:scale-105 transition-all duration-300">
-            <span className="font-bold text-xs bg-gradient-to-r from-[#00ffff] to-[#00ff94] text-transparent bg-clip-text">
-              EXPLORE COURTS
-            </span>
+          <div className="animate-pulse bg-transparent rounded-full px-8 py-3 hover:scale-105 transition-all duration-300">
+            <Image 
+              src="/asserts/exploreButton.png"
+              alt="Explore Courts"
+              width={250}
+              height={40}
+              className="object-contain"
+              priority
+            />
           </div>
         </Link>
       </div>

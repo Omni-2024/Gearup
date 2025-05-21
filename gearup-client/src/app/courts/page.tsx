@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CourtCard } from '@/components/home/CourtCard';
 import type { Court } from '@/types';
@@ -8,6 +8,7 @@ import { fetchCourts } from '@/services/courtService';
 import { store } from '@/state/store';
 import { useRouter } from 'next/navigation';
 import { useSnapshot } from 'valtio';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function CourtsPage() {
   const [courts, setCourts] = useState<Court[]>([]);
@@ -21,7 +22,9 @@ export default function CourtsPage() {
     priceRange: { min: 0, max: 10000 },
     minRating: 0,
   });
-  
+  const [searchQuery, setSearchQuery] = useState('');
+  const areaSliderRef = useRef<HTMLDivElement>(null);
+
   const router = useRouter();
   const snap = useSnapshot(store);
 
@@ -37,7 +40,7 @@ export default function CourtsPage() {
         const response = await fetchCourts();
         const courtsData = Array.isArray(response?.data) ? response.data : [];
         setCourts(courtsData);
-        
+
         const uniqueAreas = Array.from(new Set(courtsData.map(court => court.area)));
         setAreas(['all', ...uniqueAreas]);
       } catch (err: any) {
@@ -51,6 +54,18 @@ export default function CourtsPage() {
     loadCourts();
   }, [snap.user, router]);
 
+  const scrollLeft = () => {
+    if (areaSliderRef.current) {
+      areaSliderRef.current.scrollBy({ left: -200, behavior: 'smooth' });
+    }
+  };
+
+  const scrollRight = () => {
+    if (areaSliderRef.current) {
+      areaSliderRef.current.scrollBy({ left: 200, behavior: 'smooth' });
+    }
+  };
+
   const filteredCourts = Array.isArray(courts) ? courts.filter(court => {
     const areaMatch = selectedArea === "all" || court.area === selectedArea;
     const typeMatch = filters.type === 'all' || court.type === filters.type;
@@ -59,8 +74,12 @@ export default function CourtsPage() {
       parseInt(court.price) <= filters.priceRange.max
     );
     const ratingMatch = (court.rating || 0) >= filters.minRating;
+    const searchMatch = searchQuery === '' || 
+      court.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      court.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      court.area.toLowerCase().includes(searchQuery.toLowerCase());
 
-    return areaMatch && typeMatch && priceMatch && ratingMatch;
+    return areaMatch && typeMatch && priceMatch && ratingMatch && searchMatch;
   }) : [];
 
   const getHeaderText = () => {
@@ -125,35 +144,61 @@ export default function CourtsPage() {
         >
           {getHeaderText()}
         </motion.h1>
-        <motion.p 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="text-gray-400 text-center mb-8"
-        >
-          Find and book your perfect court
-        </motion.p>
+
+        {/* Search Bar */}
+        <div className="max-w-2xl mx-auto mb-8">
+          <div className="relative">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="Search courts by name, location, or area..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full bg-[#1C3F39] text-white pl-12 pr-4 py-3 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00FF29] placeholder-gray-400"
+            />
+          </div>
+        </div>
         
-        {/* Area filter buttons */}
-        <div className="flex justify-center gap-2 mb-6">
-          {areas.map((area, index) => (
-            <motion.button
-              key={area}
-              initial={{ opacity: 0, y: -20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + index * 0.1 }}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setSelectedArea(area)}
-              className={`px-4 py-2 ${
-                selectedArea === area
-                  ? 'bg-[#1C3F39] text-white'
-                  : 'bg-transparent border border-gray-600 text-white hover:border-[#00FF29] hover:text-[#00FF29]'
-              } rounded-full transition-colors capitalize`}
-            >
-              {area === "all" ? "All Areas" : area}
-            </motion.button>
-          ))}
+        {/* Area filter carousel */}
+        <div className="relative mb-6 px-14">
+          <button
+            onClick={scrollLeft}
+            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-[#1C3F39] p-2 rounded-full text-white hover:bg-[#2A5A52] transition-colors z-10"
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          
+          <div 
+            ref={areaSliderRef}
+            className="flex overflow-x-auto scrollbar-hide gap-3 scroll-smooth px-4"
+            style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+          >
+            {areas.map((area, index) => (
+              <motion.button
+                key={area}
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 + index * 0.1 }}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setSelectedArea(area)}
+                className={`px-6 py-2 whitespace-nowrap flex-shrink-0 ${
+                  selectedArea === area
+                    ? 'bg-[#1C3F39] text-white'
+                    : 'bg-transparent border border-gray-600 text-white hover:border-[#00FF29] hover:text-[#00FF29]'
+                } rounded-full transition-colors capitalize`}
+              >
+                {area === "all" ? "All Areas" : area}
+              </motion.button>
+            ))}
+          </div>
+
+          <button
+            onClick={scrollRight}
+            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-[#1C3F39] p-2 rounded-full text-white hover:bg-[#2A5A52] transition-colors z-10"
+          >
+            <ChevronRight className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Filter toggle button */}

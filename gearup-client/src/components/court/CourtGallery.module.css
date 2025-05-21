@@ -1,0 +1,19 @@
+.sliderContainer :global(.slick-dots) {
+  bottom: 16px;
+  z-index: 10;
+}
+
+.sliderContainer :global(.slick-dots li button:before) {
+  color: white;
+  opacity: 0.5;
+  font-size: 8px;
+}
+
+.sliderContainer :global(.slick-dots li.slick-active button:before) {
+  color: white;
+  opacity: 1;
+}
+
+.sliderContainer :global(.slick-slide) {
+  padding-bottom: 4px;
+}

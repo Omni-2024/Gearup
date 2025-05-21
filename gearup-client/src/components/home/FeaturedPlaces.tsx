@@ -253,7 +253,7 @@ export const FeaturedPlaces = () => {
                   whileHover={{ scale: 1.02 }}
                 >
                   <CourtCard
-                    id={court.id}
+                    id={court.id.toString()}
                     name={court.name}
                     location={court.location}
                     imagePath={court.imagePath}

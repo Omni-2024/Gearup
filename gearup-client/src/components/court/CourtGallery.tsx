@@ -1,42 +1,96 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, X } from 'lucide-react';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
+import { useEffect, useState } from 'react';
+import styles from './CourtGallery.module.css';
 
 interface CourtGalleryProps {
   images: string[];
 }
 
+type SliderSettings = {
+  dots: boolean;
+  infinite: boolean;
+  speed: number;
+  slidesToShow: number;
+  slidesToScroll: number;
+  arrows: boolean;
+  autoplay: boolean;
+  autoplaySpeed: number;
+};
+
 export function CourtGallery({ images }: CourtGalleryProps) {
-  const [selectedImage, setSelectedImage] = useState<number | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const openLightbox = (index: number) => setSelectedImage(index);
-  const closeLightbox = () => setSelectedImage(null);
-  const nextImage = () => {
-    if (selectedImage !== null && selectedImage < images.length - 1) {
-      setSelectedImage(selectedImage + 1);
-    }
-  };
-  const prevImage = () => {
-    if (selectedImage !== null && selectedImage > 0) {
-      setSelectedImage(selectedImage - 1);
-    }
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const sliderSettings: SliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: false,
+    autoplay: true,
+    autoplaySpeed: 3000
   };
 
-  return (
-    <div className="py-8">
-      <div className="container mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+  if (isMobile) {
+    return (
+      <div className={`relative mb-8 ${styles.sliderContainer}`}>
+        <Slider {...sliderSettings}>
           {images.map((image, index) => (
-            <div 
-              key={index} 
-              className="relative aspect-[4/3] rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => openLightbox(index)}
-            >
+            <div key={index} className="relative aspect-[4/3]">
               <Image
                 src={image}
                 alt={`Court view ${index + 1}`}
+                fill
+                className="object-cover"
+                priority={index === 0}
+              />
+            </div>
+          ))}
+        </Slider>
+      </div>
+    );
+  }
+
+  return (
+    <div className="container mx-auto px-4 mb-8">
+      <div className="grid grid-cols-3 gap-4">
+        {/* Main large image */}
+        <div className="col-span-2 relative aspect-[4/3] rounded-lg overflow-hidden">
+          <Image
+            src={images[0]}
+            alt="Main court view"
+            fill
+            className="object-cover"
+            priority
+          />
+        </div>
+
+        {/* Side images */}
+        <div className="space-y-4">
+          {images.slice(1, 3).map((image, index) => (
+            <div 
+              key={index}
+              className="relative aspect-[4/3] rounded-lg overflow-hidden"
+            >
+              <Image
+                src={image}
+                alt={`Court view ${index + 2}`}
                 fill
                 className="object-cover"
               />
@@ -44,40 +98,6 @@ export function CourtGallery({ images }: CourtGalleryProps) {
           ))}
         </div>
       </div>
-
-      {/* Lightbox */}
-      {selectedImage !== null && (
-        <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center">
-          <button 
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 text-white hover:text-[#00FF29] transition-colors"
-          >
-            <X className="w-8 h-8" />
-          </button>
-          <button 
-            onClick={prevImage}
-            className="absolute left-4 text-white hover:text-[#00FF29] transition-colors disabled:opacity-50"
-            disabled={selectedImage === 0}
-          >
-            <ChevronLeft className="w-8 h-8" />
-          </button>
-          <div className="relative w-[90vw] h-[80vh]">
-            <Image
-              src={images[selectedImage]}
-              alt={`Court view ${selectedImage + 1}`}
-              fill
-              className="object-contain"
-            />
-          </div>
-          <button 
-            onClick={nextImage}
-            className="absolute right-4 text-white hover:text-[#00FF29] transition-colors disabled:opacity-50"
-            disabled={selectedImage === images.length - 1}
-          >
-            <ChevronRight className="w-8 h-8" />
-          </button>
-        </div>
-      )}
     </div>
   );
 }

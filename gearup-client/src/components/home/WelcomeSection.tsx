@@ -40,7 +40,7 @@ export const WelcomeSection = () => {
             </p>
             <Link 
               href="/join"
-              className="inline-block px-8 py-2 border-2 text-sm border-[#7cd44e] text-[#7cd44e] font-bold rounded-lg hover:border-[#00CC21] hover:text-[#00CC21] transition-colors"
+              className="inline-block px-8 py-2 border-2 text-sm border-[#7cd44e] text-[#7cd44e] font-bold rounded-lg hover:border-[#00CC21] hover:text-[#00CC21] transition-colors md:text-left text-center w-full md:w-auto"
             >
               JOIN NOW
             </Link>
