@@ -121,3 +121,23 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
 }
+
+/* Custom carousel arrow styles */
+.react-multiple-carousel__arrow--left {
+  left: 100px !important; /* Increased from default */
+}
+
+.react-multiple-carousel__arrow--right {
+  right: 100px !important; /* Match left arrow spacing */
+}
+
+.react-multiple-carousel__arrow {
+  min-width: 40px !important;
+  min-height: 40px !important;
+  background: rgba(28, 63, 57, 0.9) !important;
+  z-index: 10 !important;
+}
+
+.react-multiple-carousel__arrow:hover {
+  background: rgba(42, 90, 82, 1) !important;
+}
