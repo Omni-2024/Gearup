@@ -99,7 +99,7 @@
 .hero-glow-effect::after {
   content: "";
   position: absolute;
-  background-color: #79e840cc;
+  background-color: transparent;
   border-radius: 50%;
   box-shadow: 0 250px 2000px 50px #79e84080;
   height: 350px;
@@ -111,9 +111,10 @@
   z-index: 60;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 767px) {
   .hero-glow-effect::after {
-    display: none;
+    /* position the glow relative to viewport height */
+    top: calc(100vh + 10px);
   }
 }
 
