@@ -84,7 +84,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#02080D] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8" style={{ backgroundImage: 'url(/asserts/Website-BG.png)' }}>
       <div className="max-w-md w-full">
         <div className="text-center mb-10">
           <h2 className="text-4xl font-bold text-white mb-2">
@@ -124,7 +124,7 @@ export const AuthForm = ({ type }: AuthFormProps) => {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="bg-[#1C3F39] rounded-2xl shadow-2xl overflow-hidden p-8">
+        <form onSubmit={handleSubmit} className="bg-[#1C3F39]/40 border-1 border-[#00FF29] rounded-2xl shadow-2xl overflow-hidden p-8">
           <div className="space-y-5">
             {type === 'signup' && (
               <div>
